@@ -1,0 +1,808 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alternator Trainer</title>
+<meta name="description" content="Learn the parts of a car or boat alternator charging system, take a quiz, and diagnose simulated faults with a multimeter, clamp meter and load tester.">
+<style>
+:root{
+  --bg:#f4f2ee; --panel:#ffffff; --panel2:#ebe8e2; --ink:#1d1f22; --muted:#5d6168; --line:#c9c4bb;
+  --accent:#c2410c; --accent-ink:#ffffff; --pos:#b91c1c; --neg:#1f2937; --ok:#15803d; --bad:#b91c1c; --warn:#a16207;
+  --metal:#d8d4cc; --copper:#b8722c; --field:#6d5bd0; --sel:#f59e0b; --lcd:#c7d3b4; --lcd-ink:#1b2614;
+  --shadow:0 1px 2px rgba(0,0,0,.06),0 4px 14px rgba(0,0,0,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15171a; --panel:#1e2125; --panel2:#272b30; --ink:#e9e6e1; --muted:#a0a4ab; --line:#3a3f46;
+    --accent:#fb923c; --accent-ink:#1a0d03; --pos:#f87171; --neg:#cbd5e1; --ok:#4ade80; --bad:#f87171; --warn:#facc15;
+    --metal:#3b4048; --copper:#d08a45; --field:#a597ff; --sel:#fbbf24; --lcd:#9fb08a; --lcd-ink:#121a0c;
+    --shadow:0 1px 2px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15171a; --panel:#1e2125; --panel2:#272b30; --ink:#e9e6e1; --muted:#a0a4ab; --line:#3a3f46;
+  --accent:#fb923c; --accent-ink:#1a0d03; --pos:#f87171; --neg:#cbd5e1; --ok:#4ade80; --bad:#f87171; --warn:#facc15;
+  --metal:#3b4048; --copper:#d08a45; --field:#a597ff; --sel:#fbbf24; --lcd:#9fb08a; --lcd-ink:#121a0c;
+  --shadow:0 1px 2px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{padding:20px 16px 0;max-width:1180px;margin:0 auto}
+h1{font-size:1.6rem;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 14px}
+nav{display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+nav button{background:none;border:0;border-bottom:3px solid transparent;color:var(--muted);font:inherit;font-weight:600;padding:10px 14px;cursor:pointer}
+nav button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+main{max-width:1180px;margin:0 auto;padding:16px}
+section[hidden]{display:none}
+.grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:var(--shadow)}
+.card h2{margin:0 0 8px;font-size:1.15rem}
+.card h3{margin:14px 0 6px;font-size:1rem}
+.muted{color:var(--muted)}
+.small{font-size:.88rem}
+button.btn{font:inherit;font-weight:600;border:1px solid var(--line);background:var(--panel2);color:var(--ink);border-radius:8px;padding:8px 12px;cursor:pointer}
+button.btn:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button.btn:disabled{opacity:.45;cursor:not-allowed}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex-wrap:wrap}
+.seg button{font:inherit;font-size:.9rem;border:0;background:var(--panel2);color:var(--ink);padding:7px 11px;cursor:pointer;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);font-weight:700}
+.seg button:disabled{opacity:.4;cursor:not-allowed}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:8px 0}
+.row label{font-weight:600;font-size:.9rem;min-width:84px}
+select{font:inherit;font-size:.92rem;padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--ink);max-width:100%}
+.diagram{width:100%;height:auto;display:block;background:var(--panel2);border-radius:10px}
+.diagram text{fill:var(--ink);font-size:13px;font-family:system-ui,sans-serif;pointer-events:none}
+.diagram .lbl-s{font-size:11px;fill:var(--muted)}
+.diagram .part{cursor:pointer}
+.diagram .part:hover .hl,.diagram .part.sel .hl{stroke:var(--sel)!important;stroke-width:4}
+.diagram .part:focus{outline:none}
+.diagram .part:focus-visible .hl{stroke:var(--sel)!important;stroke-width:4}
+.diagram .probe{display:none;cursor:pointer}
+.diagram.test .probe{display:inline}
+.diagram.test .part{cursor:default}
+.diagram.test .part:hover .hl{stroke-width:inherit}
+.diagram .probe circle.ring{fill:transparent;stroke:var(--muted);stroke-width:2;stroke-dasharray:3 3}
+.diagram .probe.red circle.ring{stroke:#ef4444;stroke-width:4;stroke-dasharray:none}
+.diagram .probe.black circle.ring{stroke:var(--neg);stroke-width:4;stroke-dasharray:none}
+.diagram.test .termlbl{display:none}
+.diagram .probe text{font-size:11px;font-weight:700}
+.info h2{color:var(--accent)}
+.info dt{font-weight:700;margin-top:8px}
+.info dd{margin:2px 0 0}
+.partlist{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.partlist button{font:inherit;font-size:.82rem;padding:4px 9px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.partlist button.sel{border-color:var(--sel);background:var(--sel);color:#1a1200}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.8rem;text-transform:uppercase;letter-spacing:.03em;color:var(--muted)}
+.tablewrap{overflow-x:auto}
+.quiz-q{font-size:1.1rem;font-weight:600;margin:6px 0 12px}
+.opts{display:grid;gap:8px}
+.opts button{text-align:left;font:inherit;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--ink);cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--accent)}
+.opts button.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 18%,var(--panel2))}
+.opts button.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 18%,var(--panel2))}
+.opts button:disabled{cursor:default}
+.explain{margin-top:12px;padding:10px 12px;border-left:4px solid var(--accent);background:var(--panel2);border-radius:6px}
+.progress{height:6px;background:var(--panel2);border-radius:99px;overflow:hidden;margin:6px 0 10px}
+.progress div{height:100%;background:var(--accent);width:0}
+.meter{background:#2a2d31;border-radius:14px;padding:14px;color:#eee;border:2px solid #111}
+.lcd{background:var(--lcd);color:var(--lcd-ink);font:700 2.2rem/1.1 ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;padding:10px 12px;border-radius:6px;text-align:right;min-height:64px;letter-spacing:.02em}
+.lcd small{font-size:.9rem;display:block;font-weight:600}
+.meter .row label{color:#ddd}
+.meter select{background:#3a3e44;color:#eee;border-color:#555}
+.meter .seg button{background:#3a3e44;color:#eee;border-color:#555}
+.meter .seg{border-color:#555}
+.meter .seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.dash{display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding:8px 10px;background:#111;color:#ddd;border-radius:10px;margin-top:10px;font-size:.88rem}
+.bulb{width:22px;height:22px;border-radius:50%;background:#3a1a1a;border:2px solid #555;display:inline-block;vertical-align:middle;margin-right:6px}
+.bulb.on{background:#ff3b30;box-shadow:0 0 12px 3px #ff3b30aa}
+.gauge{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;color:#7dd3fc}
+.complaint{background:var(--panel2);border-radius:8px;padding:10px 12px;margin:6px 0 10px;border-left:4px solid var(--warn)}
+.log td{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.82rem}
+.result{margin-top:12px;padding:12px;border-radius:8px;border:2px solid var(--line)}
+.result.good{border-color:var(--ok)}
+.result.badr{border-color:var(--bad)}
+.stats{display:flex;gap:16px;flex-wrap:wrap;font-size:.9rem;color:var(--muted)}
+.stats b{color:var(--ink)}
+.notes{margin:8px 0 0;padding-left:18px}
+.notes li{margin:3px 0}
+details summary{cursor:pointer;font-weight:600}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;padding:1px 7px;border-radius:99px;background:var(--panel2);border:1px solid var(--line);color:var(--muted)}
+footer{max-width:1180px;margin:0 auto;padding:10px 16px 30px;color:var(--muted);font-size:.85rem}
+</style>
+</head>
+<body>
+<header>
+  <h1>Alternator Trainer</h1>
+  <p class="sub">Car and boat charging systems: learn the parts, take the quiz, then put meters on a simulated engine and find the fault.</p>
+  <nav role="tablist">
+    <button role="tab" aria-selected="true" data-tab="learn">1. Learn</button>
+    <button role="tab" aria-selected="false" data-tab="quiz">2. Quiz</button>
+    <button role="tab" aria-selected="false" data-tab="diag">3. Diagnose</button>
+  </nav>
+</header>
+
+<main>
+<!-- ================= LEARN ================= -->
+<section id="learn">
+  <div class="grid">
+    <div class="card">
+      <h2>The charging system</h2>
+      <p class="muted small">Click any part of the drawing (or a name below) to see what it does, how it fails, and how you test it.</p>
+      <div id="learnDiagram"></div>
+      <div class="partlist" id="partList"></div>
+    </div>
+    <div class="card info" id="info" aria-live="polite"></div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h2>How the system works</h2>
+    <ol class="notes">
+      <li>The crankshaft turns the alternator pulley through the drive belt, usually 2.5 to 3 times engine speed.</li>
+      <li>The voltage regulator feeds a small current (2 to 6 A) through the brushes and slip rings into the rotor's field coil. That turns the spinning rotor into an electromagnet.</li>
+      <li>The rotating magnetic field induces three-phase AC in the stationary stator windings.</li>
+      <li>The rectifier's diodes turn that AC into DC at the B+ terminal. The output current leaves through the B+ cable, charges the battery and runs the loads, and comes back through the engine block and the alternator's case or ground terminal.</li>
+      <li>The regulator watches system voltage. Below its setpoint (about 14.2 to 14.6 V for a 12 V system) it raises field current; above it, it cuts field current back. Output voltage is controlled by field current, not by engine speed.</li>
+      <li>At key-on with the engine stopped, current flows through the charge lamp into the D+/exciter terminal to start the field. The lamp lights. Once the alternator is charging, the D+ terminal rises to system voltage, there's no voltage across the lamp, and it goes out.</li>
+    </ol>
+    <h3>Boat differences</h3>
+    <ul class="notes">
+      <li>Marine alternators must be ignition-protected (SAE J1171 / ISO 8846) so brush sparks can't ignite gasoline vapor in the engine compartment.</li>
+      <li>Boats often charge several battery banks through a battery switch, a diode isolator, or an automatic charging relay (ACR). A diode isolator drops about 0.6 to 0.8 V, so the regulator needs a battery sense wire or a higher setpoint to make up for it.</li>
+      <li>Engines on rubber mounts and alternators on isolated-ground designs need a dedicated ground cable. Never rely on the mounting bracket alone.</li>
+      <li>Never turn the battery switch to OFF with the engine running. The load dump spike can destroy the rectifier diodes and regulator. A field disconnect on the switch, or an alternator protection device, prevents this.</li>
+    </ul>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h2>Test reference (12 V system)</h2>
+    <div class="tablewrap">
+    <table>
+      <thead><tr><th>Test</th><th>Conditions</th><th>Meter hookup</th><th>Good result</th></tr></thead>
+      <tbody>
+        <tr><td>Resting battery voltage</td><td>Key off, engine off, settled</td><td>DC V, red BAT+ / black BAT−</td><td>12.6 V or more is full. 12.2 V is about half. Under 11.8 V is discharged or a shorted cell.</td></tr>
+        <tr><td>Charging voltage</td><td>Engine at 2000 rpm</td><td>DC V across battery posts</td><td>13.8 to 14.6 V. Above 15 V means overcharging; under 13.2 V means not charging enough.</td></tr>
+        <tr><td>Positive-side voltage drop</td><td>Running, high load (current flowing)</td><td>DC V, red ALT B+ / black BAT+</td><td>Under 0.3 V</td></tr>
+        <tr><td>Alternator ground drop</td><td>Running, high load</td><td>DC V, red BAT− / black ALT case</td><td>Under 0.2 V</td></tr>
+        <tr><td>Battery ground strap drop</td><td>High load (running, or key on with loads on)</td><td>DC V across BAT− post and engine block</td><td>Under 0.2 V</td></tr>
+        <tr><td>Diode / ripple test</td><td>Running, high load</td><td>AC V, red ALT B+ / black ALT case</td><td>Under 0.5 V AC. A bad diode usually shows over 1 V AC.</td></tr>
+        <tr><td>Exciter circuit</td><td>Key on, engine off</td><td>DC V, red D+ / black ground. Watch the charge lamp.</td><td>Lamp lit, D+ about 1 to 2 V. Lamp out with 0 V means an open exciter feed. Lamp out with full battery voltage at D+ means an open field (brushes or regulator).</td></tr>
+        <tr><td>Output test</td><td>Running at 2000 rpm, carbon pile load</td><td>Clamp on ALT B+ cable</td><td>At least 90% of the rated output</td></tr>
+        <tr><td>Battery load test</td><td>Engine off, load at half CCA for 15 s</td><td>Load tester on the battery posts</td><td>Stays at 9.6 V or higher</td></tr>
+        <tr><td>Parasitic draw</td><td>Key off, everything off, modules asleep</td><td>Clamp (or series ammeter) on a battery cable</td><td>Under 0.05 A (50 mA)</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</section>
+
+<!-- ================= QUIZ ================= -->
+<section id="quiz" hidden>
+  <div class="card" style="max-width:760px;margin:0 auto">
+    <div class="row" style="justify-content:space-between;margin:0">
+      <h2 style="margin:0">Quiz</h2>
+      <span class="muted small" id="qCount"></span>
+    </div>
+    <div class="progress"><div id="qBar"></div></div>
+    <div id="quizBody"></div>
+  </div>
+</section>
+
+<!-- ================= DIAGNOSE ================= -->
+<section id="diag" hidden>
+  <div class="card" style="margin-bottom:16px">
+    <div class="row" style="justify-content:space-between;margin:0">
+      <h2 style="margin:0">Job ticket <span class="tag" id="vehTag"></span></h2>
+      <div class="stats" id="stats"></div>
+    </div>
+    <div class="complaint" id="complaint"></div>
+    <p class="small muted" style="margin:0">The system may have one fault, or it may be working correctly. Run your tests, then submit a diagnosis. Each recorded reading counts toward your test total.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Engine bay</h2>
+      <div class="row">
+        <label>Key / engine</label>
+        <div class="seg" id="ignSeg">
+          <button data-v="off" aria-pressed="true">Key off</button>
+          <button data-v="on" aria-pressed="false">Key on, engine off</button>
+          <button data-v="run" aria-pressed="false">Engine running</button>
+        </div>
+      </div>
+      <div class="row">
+        <label>Engine speed</label>
+        <div class="seg" id="rpmSeg">
+          <button data-v="idle" aria-pressed="true">Idle (750)</button>
+          <button data-v="2k" aria-pressed="false">2000 rpm</button>
+        </div>
+      </div>
+      <div class="row">
+        <label>Loads</label>
+        <div class="seg" id="loadSeg">
+          <button data-v="low" aria-pressed="true">Light</button>
+          <button data-v="high" aria-pressed="false">Heavy (lights, blower, pumps)</button>
+        </div>
+      </div>
+      <div id="diagDiagram"></div>
+      <p class="small muted" style="margin:6px 0 0">Click a test point to put the selected lead on it. The lead you are placing alternates red, then black.</p>
+      <div class="dash">
+        <span><span class="bulb" id="lampBulb"></span>Charge lamp</span>
+        <span>Dash voltmeter: <span class="gauge" id="gauge">--.-</span></span>
+        <span id="engineSound" class="muted"></span>
+      </div>
+    </div>
+
+    <div>
+      <div class="meter">
+        <div class="lcd" id="lcd" aria-live="polite">0.00</div>
+        <div class="row">
+          <label>Meter mode</label>
+          <div class="seg" id="modeSeg">
+            <button data-v="dcv" aria-pressed="true">V DC</button>
+            <button data-v="acv" aria-pressed="false">V AC</button>
+            <button data-v="amp" aria-pressed="false">Clamp A DC</button>
+          </div>
+        </div>
+        <div id="leadRows">
+          <div class="row"><label style="color:#f87171">Red lead</label><select id="redSel"></select></div>
+          <div class="row"><label>Black lead</label><select id="blackSel"></select></div>
+        </div>
+        <div id="clampRow" hidden>
+          <div class="row"><label>Clamp on</label><select id="clampSel">
+            <option value="alt">Alternator B+ output cable</option>
+            <option value="bat">Battery negative cable (+ = charging)</option>
+            <option value="load">Loads feed cable</option>
+          </select></div>
+        </div>
+        <div class="row"><button class="btn primary" id="logBtn">Record reading</button></div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <h2>Other tools</h2>
+        <div class="row" style="flex-wrap:wrap">
+          <button class="btn" id="loadTestBtn">Carbon-pile load tester</button>
+          <button class="btn" data-look="belt">Inspect belt</button>
+          <button class="btn" data-look="battery">Inspect battery</button>
+          <button class="btn" data-look="wiring">Inspect wiring</button>
+        </div>
+        <div id="toolOut" class="small" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid" style="margin-top:16px">
+    <div class="card">
+      <h2>Test log</h2>
+      <div class="tablewrap"><table class="log">
+        <thead><tr><th>#</th><th>Condition</th><th>Measurement</th><th>Reading</th></tr></thead>
+        <tbody id="logBody"><tr><td colspan="4" class="muted">No readings yet.</td></tr></tbody>
+      </table></div>
+    </div>
+    <div class="card">
+      <h2>Your diagnosis</h2>
+      <select id="diagSel" style="width:100%"></select>
+      <div class="row"><button class="btn primary" id="submitBtn">Submit diagnosis</button><button class="btn" id="newBtn">Next job</button></div>
+      <div id="resultBox"></div>
+      <details style="margin-top:12px">
+        <summary>Suggested test sequence</summary>
+        <ol class="notes small">
+          <li>Key off: read resting battery voltage. Clamp the battery cable for parasitic draw.</li>
+          <li>Key off: battery load test.</li>
+          <li>Key on, engine off: does the charge lamp light? Read D+ to ground.</li>
+          <li>Start the engine, 2000 rpm, light loads: read voltage across the battery posts.</li>
+          <li>Heavy loads: repeat, then check the drops (ALT B+ to BAT+, BAT− to ALT case, BAT− to block).</li>
+          <li>Switch to AC volts: ripple from ALT B+ to ALT case.</li>
+          <li>Output test with the load tester while running. Inspect the belt.</li>
+        </ol>
+      </details>
+    </div>
+  </div>
+</section>
+</main>
+<footer>Simulated readings are simplified for training. Real systems vary by make; always follow the manufacturer's procedure and specifications.</footer>
+
+<template id="sysSvg">
+<svg viewBox="0 0 900 530" class="diagram" role="img" aria-label="Charging system diagram">
+  <!-- belt & pulleys -->
+  <g class="part" data-part="belt" tabindex="0">
+    <line x1="32" y1="200" x2="22" y2="440" stroke="var(--neg)" stroke-width="5" class="hl"/>
+    <line x1="88" y1="200" x2="98" y2="440" stroke="var(--neg)" stroke-width="5" class="hl"/>
+    <circle cx="60" cy="440" r="38" fill="var(--metal)" stroke="var(--neg)" stroke-width="2" class="hl"/>
+    <circle cx="60" cy="440" r="6" fill="var(--neg)"/>
+    <text x="60" y="497" text-anchor="middle" class="lbl-s">Crank pulley</text>
+    <text x="14" y="320" text-anchor="middle" transform="rotate(-90 14 320)" class="lbl-s">Drive belt</text>
+  </g>
+  <g class="part" data-part="pulley" tabindex="0">
+    <circle cx="60" cy="200" r="28" fill="var(--metal)" stroke="var(--neg)" stroke-width="2" class="hl"/>
+    <rect x="86" y="196" width="40" height="8" fill="var(--neg)"/>
+    <circle cx="60" cy="200" r="5" fill="var(--neg)"/>
+    <text x="60" y="160" text-anchor="middle" class="lbl-s">Pulley</text>
+  </g>
+  <!-- housing -->
+  <rect x="110" y="56" width="365" height="274" rx="18" fill="var(--panel)" stroke="var(--line)" stroke-width="2"/>
+  <text x="292" y="78" text-anchor="middle" style="font-weight:700;letter-spacing:.1em">ALTERNATOR</text>
+  <!-- internal wires -->
+  <line x1="260" y1="130" x2="330" y2="130" stroke="var(--copper)" stroke-width="3"/>
+  <line x1="330" y1="232" x2="312" y2="232" stroke="var(--field)" stroke-width="3"/>
+  <line x1="455" y1="110" x2="470" y2="110" stroke="var(--pos)" stroke-width="3"/>
+  <line x1="455" y1="240" x2="470" y2="240" stroke="var(--field)" stroke-width="3"/>
+  <line x1="392" y1="170" x2="392" y2="195" stroke="var(--pos)" stroke-width="2" stroke-dasharray="4 3"/>
+  <g class="part" data-part="stator" tabindex="0">
+    <rect x="128" y="96" width="132" height="210" rx="8" fill="var(--copper)" fill-opacity=".35" stroke="var(--copper)" stroke-width="2" class="hl"/>
+    <text x="194" y="116" text-anchor="middle">Stator</text>
+  </g>
+  <g class="part" data-part="rotor" tabindex="0">
+    <rect x="150" y="132" width="88" height="140" rx="6" fill="var(--field)" fill-opacity=".3" stroke="var(--field)" stroke-width="2" class="hl"/>
+    <text x="194" y="198" text-anchor="middle">Rotor</text>
+    <text x="194" y="215" text-anchor="middle" class="lbl-s">field coil</text>
+  </g>
+  <g class="part" data-part="brushes" tabindex="0">
+    <rect x="262" y="152" width="50" height="100" rx="4" fill="var(--metal)" stroke="var(--muted)" stroke-width="2" class="hl"/>
+    <text x="287" y="190" text-anchor="middle" class="lbl-s">Slip</text>
+    <text x="287" y="204" text-anchor="middle" class="lbl-s">rings &amp;</text>
+    <text x="287" y="218" text-anchor="middle" class="lbl-s">brushes</text>
+  </g>
+  <g class="part" data-part="rectifier" tabindex="0">
+    <rect x="330" y="95" width="125" height="75" rx="6" fill="var(--panel2)" stroke="var(--pos)" stroke-width="2" class="hl"/>
+    <text x="392" y="127" text-anchor="middle">Rectifier</text>
+    <text x="392" y="144" text-anchor="middle" class="lbl-s">(6 diodes)</text>
+  </g>
+  <g class="part" data-part="regulator" tabindex="0">
+    <rect x="330" y="195" width="125" height="75" rx="6" fill="var(--panel2)" stroke="var(--field)" stroke-width="2" class="hl"/>
+    <text x="392" y="227" text-anchor="middle">Voltage</text>
+    <text x="392" y="244" text-anchor="middle">regulator</text>
+  </g>
+  <!-- B+ cable, fuse, switch -->
+  <g class="part" data-part="bplus" tabindex="0">
+    <path d="M470 110 H560 M610 110 H750 V157 M750 193 V390" fill="none" stroke="var(--pos)" stroke-width="5" class="hl"/>
+    <circle cx="470" cy="110" r="8" fill="var(--pos)"/>
+    <text x="680" y="100" text-anchor="middle" class="lbl-s">B+ output cable</text>
+    <text x="486" y="100" class="lbl-s termlbl">B+</text>
+  </g>
+  <g class="part" data-part="fuse" tabindex="0">
+    <rect x="560" y="100" width="50" height="20" rx="4" fill="var(--panel)" stroke="var(--warn)" stroke-width="2" class="hl"/>
+    <line x1="566" y1="110" x2="604" y2="110" stroke="var(--warn)" stroke-width="2"/>
+    <text x="585" y="138" text-anchor="middle" class="lbl-s">Main fuse</text>
+  </g>
+  <g class="part" data-part="batswitch" tabindex="0">
+    <circle cx="750" cy="175" r="18" fill="var(--panel)" stroke="var(--neg)" stroke-width="2" class="hl"/>
+    <line x1="742" y1="183" x2="758" y2="167" stroke="var(--neg)" stroke-width="3"/>
+    <text x="776" y="172" class="lbl-s">Battery switch</text>
+    <text x="776" y="186" class="lbl-s">(boat)</text>
+  </g>
+  <!-- exciter circuit -->
+  <g class="part" data-part="exc" tabindex="0">
+    <path d="M470 240 H522" fill="none" stroke="var(--field)" stroke-width="3" class="hl"/>
+    <circle cx="470" cy="240" r="8" fill="var(--field)"/>
+    <text x="486" y="230" class="lbl-s termlbl">D+</text>
+  </g>
+  <g class="part" data-part="lamp" tabindex="0">
+    <circle cx="538" cy="240" r="16" fill="var(--panel)" stroke="var(--warn)" stroke-width="2" class="hl lampsvg"/>
+    <path d="M527 229 L549 251 M549 229 L527 251" stroke="var(--warn)" stroke-width="2"/>
+    <text x="538" y="276" text-anchor="middle" class="lbl-s">Charge lamp</text>
+  </g>
+  <g class="part" data-part="ign" tabindex="0">
+    <path d="M554 240 H612 M668 240 H750" fill="none" stroke="var(--field)" stroke-width="3"/>
+    <circle cx="616" cy="240" r="4" fill="var(--neg)"/>
+    <circle cx="664" cy="240" r="4" fill="var(--neg)"/>
+    <line x1="616" y1="240" x2="660" y2="224" stroke="var(--neg)" stroke-width="3" class="hl"/>
+    <rect x="600" y="214" width="80" height="36" fill="transparent"/>
+    <text x="640" y="276" text-anchor="middle" class="lbl-s">Ignition switch</text>
+  </g>
+  <!-- loads -->
+  <g class="part" data-part="loads" tabindex="0">
+    <path d="M750 300 H840 V312 M840 362 V508 H345 V475" fill="none" stroke="var(--neg)" stroke-width="3"/>
+    <rect x="796" y="312" width="88" height="50" rx="6" fill="var(--panel)" stroke="var(--neg)" stroke-width="2" class="hl"/>
+    <text x="840" y="334" text-anchor="middle">Loads</text>
+    <text x="840" y="350" text-anchor="middle" class="lbl-s">lights, pumps</text>
+  </g>
+  <!-- grounds -->
+  <g class="part" data-part="altgnd" tabindex="0">
+    <path d="M300 330 V400" stroke="var(--neg)" stroke-width="5" class="hl"/>
+    <circle cx="300" cy="330" r="7" fill="var(--neg)"/>
+    <text x="312" y="372" class="lbl-s">Alternator ground</text>
+  </g>
+  <g class="part" data-part="block" tabindex="0">
+    <rect x="130" y="400" width="430" height="75" rx="10" fill="var(--metal)" stroke="var(--muted)" stroke-width="2" class="hl"/>
+    <text x="345" y="444" text-anchor="middle" style="font-weight:600">ENGINE BLOCK (ground)</text>
+  </g>
+  <g class="part" data-part="batgnd" tabindex="0">
+    <path d="M631 390 V372 H585 V435 H560" fill="none" stroke="var(--neg)" stroke-width="5" class="hl"/>
+    <text x="592" y="366" class="lbl-s">Ground strap</text>
+  </g>
+  <g class="part" data-part="battery" tabindex="0">
+    <rect x="600" y="400" width="190" height="80" rx="6" fill="var(--panel)" stroke="var(--neg)" stroke-width="2" class="hl"/>
+    <rect x="620" y="388" width="22" height="12" fill="var(--neg)"/>
+    <rect x="739" y="388" width="22" height="12" fill="var(--pos)"/>
+    <text x="631" y="420" text-anchor="middle" style="font-weight:700">−</text>
+    <text x="750" y="420" text-anchor="middle" style="font-weight:700">+</text>
+    <text x="695" y="450" text-anchor="middle" style="font-weight:700">BATTERY 12 V</text>
+  </g>
+  <!-- probe points (test mode) -->
+  <g class="probe" data-probe="ALTB"><circle class="ring" cx="470" cy="110" r="15"/><text x="492" y="138" text-anchor="start">ALT B+</text></g>
+  <g class="probe" data-probe="EXC"><circle class="ring" cx="470" cy="240" r="15"/><text x="492" y="226" text-anchor="start">D+</text></g>
+  <g class="probe" data-probe="CASE"><circle class="ring" cx="300" cy="330" r="15"/><text x="252" y="352" text-anchor="middle">ALT case</text></g>
+  <g class="probe" data-probe="BLOCK"><circle class="ring" cx="200" cy="437" r="15"/><text x="200" y="395" text-anchor="middle">Block</text></g>
+  <g class="probe" data-probe="BATN"><circle class="ring" cx="631" cy="392" r="15"/><text x="660" y="392" text-anchor="middle">BAT−</text></g>
+  <g class="probe" data-probe="BATP"><circle class="ring" cx="750" cy="392" r="15"/><text x="722" y="380" text-anchor="middle">BAT+</text></g>
+</svg>
+</template>
+
+<script>
+"use strict";
+/* ---------------- Parts content ---------------- */
+const PARTS = {
+  belt:{name:"Drive belt & crank pulley",what:"Transfers power from the crankshaft to the alternator. Serpentine (multi-rib) or V-belts; marine engines often use V-belts on high-output alternators.",fails:"Glazing, cracks, oil contamination, or low tension let the belt slip. Output falls off under heavy load or high rpm, the belt squeals, and black dust collects around the pulley.",test:"Look for glazed shiny sides and cracks. Check deflection (about ½ in. at the middle of the longest span, or use a tension gauge). Low output under load plus a normal ripple reading points at the belt."},
+  pulley:{name:"Alternator pulley",what:"Spins the rotor, usually 2.5 to 3 times crank speed. Some are overrunning (one-way clutch) pulleys.",fails:"Misalignment chews belts. A failed overrunning clutch freewheels and the alternator stops turning at speed.",test:"Check alignment with a straightedge. With the belt off, an overrunning pulley should lock in one direction and freewheel in the other."},
+  rotor:{name:"Rotor (field coil)",what:"A coil wound inside interlocking claw-pole pieces. Field current from the regulator turns it into a spinning electromagnet with alternating N and S poles.",fails:"An open field coil means no magnetism and no output. A shorted coil draws excess field current and can burn out the regulator.",test:"Bench test: resistance across the slip rings is typically 2 to 6 Ω. Infinite means open. Any reading from a slip ring to the shaft means it's grounded."},
+  stator:{name:"Stator",what:"Three sets of windings (three-phase) in the laminated iron frame. The rotating field induces AC voltage in them.",fails:"Overheating burns the varnish and shorts windings. An open phase cuts output by about a third and adds ripple, much like a bad diode.",test:"Bench test: very low, equal resistance between leads (well under 1 Ω) and no continuity to the frame. Look for dark, burnt-smelling windings."},
+  brushes:{name:"Slip rings & brushes",what:"Carbon brushes press on two copper slip rings on the rotor shaft. That's how field current gets into the spinning rotor.",fails:"Brushes wear short and stop making contact. Output becomes intermittent, then stops. Common on older or high-hour units.",test:"Key on, engine off: with an open field, the charge lamp stays dark and the D+ terminal reads full battery voltage, because no current flows through the lamp. Measure brush length on the bench."},
+  rectifier:{name:"Rectifier (diode bridge)",what:"Six diodes (two per phase) turn the stator's AC into DC at the B+ terminal. They also stop the battery from discharging back through the stator.",fails:"An open diode cuts output and creates heavy AC ripple, which can upset electronics. A shorted diode drains the battery with the engine off and produces a whine.",test:"AC volts from ALT B+ to the alternator case with the engine running under load. Under 0.5 V AC is normal; over 1 V points to a failed diode or stator phase. Output test will also read low."},
+  regulator:{name:"Voltage regulator",what:"Controls field current to hold the system near its setpoint, about 14.2 to 14.6 V. It may be built in or external. Marine multi-stage regulators run bulk, absorption and float stages.",fails:"Shorted: full field all the time. System voltage climbs above 15 V, batteries gas and boil, and bulbs burn out. Open: no field current, no output.",test:"Running at 2000 rpm, read across the battery posts. Steady above about 14.8 V (allowing for temperature compensation) means regulator failure, once you've confirmed the sense circuit is good."},
+  bplus:{name:"B+ output terminal & cable",what:"Carries the alternator's full output, often 60 to 150 A, to the battery and the DC system.",fails:"Corrosion inside the ring terminal or crimp, or a loose nut, adds resistance. The alternator makes the right voltage, but the battery sees less, and the gap grows with current. Corrosion is often hidden under the insulation.",test:"Voltage drop test: running, heavy load, red on ALT B+ and black on BAT+. Under 0.3 V is good. A clean appearance proves nothing; only a drop test under current shows it."},
+  fuse:{name:"Main fuse (ANL / MRBF)",what:"Protects the output cable from a short circuit. ABYC requires overcurrent protection near the battery on boats.",fails:"A blown fuse disconnects the alternator. A loose or corroded fuse holder causes voltage drop like a bad cable.",test:"Include it in the positive-side voltage drop test, or measure across the fuse alone under load."},
+  batswitch:{name:"Battery switch / isolator / ACR",what:"On boats, chooses which bank(s) are connected and lets the alternator charge several banks. A diode isolator or an automatic charging relay keeps banks separate when not charging.",fails:"Worn switch contacts add resistance. Turning the switch to OFF while running causes a load-dump spike that can kill the diodes. A diode isolator drops about 0.7 V, which undercharges unless the regulator senses at the battery.",test:"Voltage drop across the switch under load (under 0.1 V). Read each bank's voltage while charging."},
+  exc:{name:"D+ / exciter terminal",what:"The regulator's connection to the charge lamp. At key-on, current through the lamp into D+ energizes the field so the alternator can start charging.",fails:"A broken wire or blown fuse in this circuit means the field never gets that initial current, so the alternator may not charge at all. The lamp stays dark at key-on.",test:"Key on, engine off: D+ to ground. About 1 to 2 V with the lamp lit is normal. 0 V with the lamp dark means an open feed. Full battery voltage with the lamp dark means an open field."},
+  lamp:{name:"Charge warning lamp",what:"Connects between the ignition-switched supply and D+. It lights at key-on and goes out once the alternator output matches system voltage.",fails:"A lamp that never lights is a fault in itself: a burned bulb, open wire, or open field. A lamp that stays lit or glows while running means low or no output.",test:"Watch it at key-on and after start-up. Always check that it lights at key-on before blaming the alternator."},
+  ign:{name:"Ignition switch",what:"Supplies switched power to the exciter circuit, plus the regulator sense or ignition terminal on many units.",fails:"A failed circuit or fuse leaves the exciter dead. A leaking switch can keep the field energized with the key off and drain the battery.",test:"Voltage at the lamp's supply side with key on should equal battery voltage."},
+  loads:{name:"DC loads",what:"Lights, pumps, electronics, blower, and so on. At idle the alternator may not be able to supply heavy loads, so the battery covers the difference.",fails:"Something left on, or a module that doesn't go to sleep, causes a parasitic drain that flattens the battery while the boat or car sits.",test:"Key off, everything off: clamp or series ammeter on a battery cable. Under 50 mA is typical. Pull fuses one at a time to find the circuit."},
+  altgnd:{name:"Alternator ground path",what:"Output current returns through the alternator case or ground terminal to the block, then to the battery negative. It carries the same current as B+.",fails:"Paint, rust, corrosion, or rubber engine mounts add resistance. The regulator sees full voltage at its own case while the battery is undercharged.",test:"Voltage drop test: running, heavy load, between BAT− and the alternator case. Under 0.2 V is good. Boats should have a dedicated ground cable to the alternator's negative terminal."},
+  block:{name:"Engine block (ground)",what:"The common return for the alternator, starter, and loads. Everything grounded to it is only as good as its connection to the battery negative.",fails:"Corrosion where the straps bolt on.",test:"Use it as a reference point for voltage drop tests."},
+  batgnd:{name:"Battery ground strap",what:"Connects the battery negative to the engine block. All charging current and starting current goes through it.",fails:"Corroded or loose strap: slow cranking, poor charging, flickering lights, and weird electronics faults.",test:"Voltage drop between the BAT− post and the block with current flowing (cranking, running with loads, or key on with heavy loads). Under 0.2 V is good."},
+  battery:{name:"Battery",what:"Stores energy and stabilizes the system voltage. It supplies starting current and covers loads the alternator can't keep up with.",fails:"Sulfation, a shorted cell (resting voltage drops to about 10.5 V), or old age. A bad battery makes a good alternator look weak because it pulls maximum current all the time.",test:"Resting voltage, a load test (half CCA for 15 s, stays at 9.6 V or higher), or a conductance tester. Always test the battery before condemning the alternator."}
+};
+
+/* ---------------- Diagram setup ---------------- */
+const tpl = document.getElementById("sysSvg");
+function mountDiagram(id, test){
+  const node = tpl.content.firstElementChild.cloneNode(true);
+  if(test) node.classList.add("test");
+  document.getElementById(id).appendChild(node);
+  return node;
+}
+const learnSvg = mountDiagram("learnDiagram", false);
+const diagSvg = mountDiagram("diagDiagram", true);
+diagSvg.querySelectorAll(".part").forEach(p=>p.removeAttribute("tabindex"));
+
+const partList = document.getElementById("partList");
+Object.entries(PARTS).forEach(([k,p])=>{
+  const b=document.createElement("button"); b.textContent=p.name; b.dataset.part=k;
+  b.addEventListener("click",()=>showPart(k)); partList.appendChild(b);
+});
+function showPart(k){
+  const p=PARTS[k];
+  learnSvg.querySelectorAll(".part").forEach(g=>g.classList.toggle("sel",g.dataset.part===k));
+  partList.querySelectorAll("button").forEach(b=>b.classList.toggle("sel",b.dataset.part===k));
+  document.getElementById("info").innerHTML=`<h2>${p.name}</h2><dl>
+    <dt>What it does</dt><dd>${p.what}</dd><dt>How it fails</dt><dd>${p.fails}</dd><dt>How to test it</dt><dd>${p.test}</dd></dl>`;
+}
+learnSvg.querySelectorAll(".part").forEach(g=>{
+  g.addEventListener("click",()=>showPart(g.dataset.part));
+  g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();showPart(g.dataset.part);}});
+});
+document.getElementById("info").innerHTML=`<h2>Pick a part</h2><p>Start with the <b>rotor</b>, <b>stator</b> and <b>rectifier</b>: they are the heart of the alternator. Then follow the current out through the <b>B+ cable</b> to the battery and back through the <b>grounds</b>.</p><p class="muted small">Color key: red = positive output, purple = field/exciter circuit, copper = stator AC, dark = ground.</p>`;
+
+/* ---------------- Tabs ---------------- */
+document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll("nav button").forEach(x=>x.setAttribute("aria-selected",x===b));
+  document.querySelectorAll("main > section").forEach(s=>s.hidden=s.id!==b.dataset.tab);
+}));
+
+/* ---------------- Quiz ---------------- */
+const QUIZ = [
+ {q:"Which component converts the stator's AC output into DC?",a:"The rectifier (diode bridge)",w:["The voltage regulator","The slip rings","The rotor"],e:"Six diodes in the rectifier, two per phase, let current flow only toward B+, turning three-phase AC into DC."},
+ {q:"How does the voltage regulator control the alternator's output voltage?",a:"By varying current through the rotor's field coil",w:["By varying engine speed","By switching stator windings in and out","By changing belt tension"],e:"More field current means a stronger magnetic field and more output. The regulator switches field current on and off rapidly to hold the setpoint."},
+ {q:"The carbon brushes in an alternator ride on:",a:"The slip rings on the rotor shaft",w:["The stator windings","The rectifier heat sink","The pulley hub"],e:"Brushes deliver field current to the spinning rotor through two smooth slip rings."},
+ {q:"With the engine at 2000 rpm, a healthy 12 V charging system should read about ___ across the battery posts.",a:"13.8 to 14.6 V",w:["12.0 to 12.6 V","15.5 to 16.5 V","11.0 to 12.0 V"],e:"The regulator setpoint for most 12 V systems is 14.2 to 14.6 V. The battery terminals read slightly less."},
+ {q:"A fully charged 12 V lead-acid battery at rest reads about:",a:"12.6 to 12.7 V",w:["14.4 V","12.0 V","11.5 V"],e:"About 12.6 V is 100%, about 12.2 V is roughly 50%, and 12.0 V or less is deeply discharged. A reading near 10.5 V suggests a shorted cell."},
+ {q:"You measure 1.6 V AC from ALT B+ to the alternator case with the engine running under load. The most likely cause is:",a:"A failed diode or open stator phase",w:["A loose ground strap","A worn belt","A parasitic drain"],e:"Normal ripple is under 0.5 V AC. A missing diode leaves a gap in the rectified waveform, which shows up as heavy AC ripple."},
+ {q:"Why must a voltage drop test be done with current flowing?",a:"Resistance only produces a voltage drop when current flows through it",w:["The meter needs the alternator to power it","It isn't necessary; key off works too","To warm up the battery"],e:"V = I × R. A corroded cable with no current through it shows 0 V drop and looks perfect."},
+ {q:"A good positive-side voltage drop (ALT B+ to BAT+) under heavy charging load is:",a:"Under about 0.3 V",w:["Under about 2 V","Exactly 0.7 V","Over 1 V"],e:"Each side of the circuit should drop only a few tenths of a volt. More than that means resistance in cables, terminals, fuses or switches."},
+ {q:"On a D+ excited alternator, the charge lamp at key-on with the engine stopped should:",a:"Light up",w:["Stay off","Flash rapidly","Glow only at high rpm"],e:"Lamp current into D+ is what excites the field. A lamp that stays dark at key-on is itself a fault clue: an open feed, bad bulb or open field."},
+ {q:"Battery voltage is 15.9 V with the engine running at 2000 rpm and light loads. The most likely fault is:",a:"Regulator failed, overcharging",w:["Bad battery ground","Slipping belt","Failed diode"],e:"Above about 15 V the regulator is not controlling field current. Expect boiling batteries and burned-out bulbs."},
+ {q:"Key off with everything off, the clamp meter on the battery cable reads 1.9 A. This indicates:",a:"A parasitic drain",w:["Normal standby current","A good charging rate","A failed regulator overcharging"],e:"Normal standby draw is usually under 50 mA. 1.9 A will flatten a battery in a few days."},
+ {q:"What does a diode isolator or automatic charging relay (ACR) do on a boat?",a:"Lets the alternator charge several battery banks while keeping them separate when not charging",w:["Converts AC shore power to DC","Prevents the engine from starting in gear","Raises the alternator's rpm"],e:"It stops the house loads from draining the start battery. A diode isolator drops about 0.7 V, so the regulator must sense at the battery to compensate."},
+ {q:"Where does the alternator's output current return to complete the circuit?",a:"Through the alternator case or ground terminal, the engine block, and the battery negative",w:["Back through the B+ cable","Through the belt","Through the charge lamp"],e:"The ground side carries the full output current, so a bad ground undercharges as much as a bad positive cable."},
+ {q:"How many phases does a typical automotive or marine alternator's stator produce?",a:"Three",w:["One","Two","Six"],e:"Three windings spaced 120° apart give smoother output. Six diodes rectify all three phases."},
+ {q:"A slipping drive belt typically causes:",a:"Low output under heavy load or high rpm, often with a squeal",w:["Very high system voltage","Heavy AC ripple at all times","A drain with the key off"],e:"Belt slip limits how much torque reaches the alternator, so output falls when demand is high. Ripple stays normal because the rectifier is fine."},
+ {q:"In a battery load test (half CCA for 15 seconds), a healthy 12 V battery should stay at or above:",a:"9.6 V",w:["12.6 V","6.0 V","14.4 V"],e:"9.6 V at about 21 °C (70 °F) is the classic pass line. A battery with a shorted cell collapses well below it."},
+ {q:"Why should you never switch the battery switch to OFF while the engine is running?",a:"The load dump voltage spike can destroy the rectifier diodes and regulator",w:["It stalls the engine instantly","It reverses the battery polarity","It will blow the main fuse every time"],e:"With the battery suddenly disconnected, nothing absorbs the output. The voltage spikes, sometimes past 40 V. Field-disconnect switches or protection devices prevent it."},
+ {q:"Why must alternators in a gasoline boat's engine compartment be ignition protected?",a:"Brush and diode sparks could ignite gasoline vapor",w:["To keep water out of the bearings","To meet noise rules","To raise output at idle"],e:"USCG rules and ABYC, ISO 8846 and SAE J1171 require ignition-protected electrical gear where gasoline vapor can collect."},
+ {q:"What is the purpose of a remote battery sense wire on a regulator?",a:"It lets the regulator respond to actual battery voltage, compensating for drops in cables or isolators",w:["It measures belt speed","It supplies field current","It grounds the alternator"],e:"Sensing at the battery means wiring or isolator losses no longer cause undercharging."},
+ {q:"Key on, engine off: the charge lamp is dark and the D+ terminal reads 12.6 V to ground. The most likely cause is:",a:"An open field circuit, such as worn brushes or a failed regulator",w:["A blown exciter fuse","A dead battery","A slipping belt"],e:"The lamp feed is good (voltage reaches D+), but with the field open no current flows, so there's no drop across the lamp. With a blown feed fuse, D+ would read 0 V."}
+];
+let qz = {list:[],i:0,score:0};
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function startQuiz(){qz={list:shuffle(QUIZ.slice()).slice(0,10),i:0,score:0};renderQ();}
+function renderQ(){
+  const body=document.getElementById("quizBody");
+  document.getElementById("qBar").style.width=(qz.i/qz.list.length*100)+"%";
+  if(qz.i>=qz.list.length){
+    document.getElementById("qCount").textContent="";
+    const pct=Math.round(qz.score/qz.list.length*100);
+    body.innerHTML=`<p class="quiz-q">You scored ${qz.score} of ${qz.list.length} (${pct}%).</p>
+      <p>${pct>=80?"You're ready for the diagnosis bench.":"Go back to Learn and look at the parts you missed, then try again."}</p>
+      <div class="row"><button class="btn primary" id="qAgain">New quiz</button><button class="btn" id="qGo">Go to Diagnose</button></div>`;
+    document.getElementById("qAgain").onclick=startQuiz;
+    document.getElementById("qGo").onclick=()=>document.querySelector('nav button[data-tab="diag"]').click();
+    return;
+  }
+  const q=qz.list[qz.i];
+  document.getElementById("qCount").textContent=`Question ${qz.i+1} of ${qz.list.length} · Score ${qz.score}`;
+  const opts=shuffle([q.a,...q.w]);
+  body.innerHTML=`<p class="quiz-q">${q.q}</p><div class="opts">${opts.map(o=>`<button>${o}</button>`).join("")}</div><div id="qExp"></div>`;
+  body.querySelectorAll(".opts button").forEach(b=>b.onclick=()=>{
+    const right=b.textContent===q.a;
+    if(right) qz.score++;
+    body.querySelectorAll(".opts button").forEach(x=>{x.disabled=true;if(x.textContent===q.a)x.classList.add("right");});
+    if(!right) b.classList.add("wrong");
+    document.getElementById("qExp").innerHTML=`<div class="explain"><b>${right?"Correct.":"Not quite."}</b> ${q.e}</div>
+      <div class="row"><button class="btn primary" id="qNext">${qz.i+1<qz.list.length?"Next question":"See score"}</button></div>`;
+    document.getElementById("qNext").onclick=()=>{qz.i++;renderQ();};
+    document.getElementById("qCount").textContent=`Question ${qz.i+1} of ${qz.list.length} · Score ${qz.score}`;
+  });
+}
+startQuiz();
+
+/* ---------------- Diagnosis simulator ---------------- */
+const FAULTS = {
+  ok:{name:"System OK: no fault found",complaints:["Pre-purchase survey: check the charging system and report.","Battery went flat after the dome lights were left on all weekend. Owner wants to know if the alternator is OK.","Dash voltmeter dips toward 13 V at idle with everything switched on. Owner asks if that's a problem.","Routine annual service. Please check the charging system."],
+     explain:"Everything was in spec. Resting voltage was normal, charging was 13.8 to 14.6 V at 2000 rpm, drops were small, ripple was low and output met rating. A dip at idle with heavy loads is normal, because idle output is limited."},
+  diode:{name:"Failed rectifier diode",complaints:["Battery slowly goes flat on long nights running the lights. The radio has a whine that rises with rpm.","Charging seems weak, and the chartplotter flickers with engine speed."],
+     explain:"One open diode cut output to about 60% of rating and produced heavy AC ripple (over 1 V AC at B+). Charging looked fine with light loads but could not keep up under heavy load."},
+  overcharge:{name:"Regulator failed: overcharging",complaints:["Headlight bulbs keep burning out and the battery smells like rotten eggs.","Battery is hot to the touch after a run and is losing water fast."],
+     explain:"The regulator was stuck at full field. Voltage across the battery climbed near 16 V even at light load. Wiring and battery were fine."},
+  nofield:{name:"No field current (worn brushes / open regulator)",complaints:["Charge lamp doesn't come on anymore, and the battery dies after a few days of use.","Engine runs fine, but the battery is flat every morning after a day on the water."],
+     explain:"The field circuit inside the alternator was open. At key-on the lamp stayed dark while D+ read full battery voltage (the feed is good but no current flows). There was no output with the engine running."},
+  exciter:{name:"Open excitation circuit (blown fuse / broken wire)",complaints:["Charge lamp never lights at all, even at key-on. The battery is going flat.","After some wiring work behind the dash, the alternator stopped charging."],
+     explain:"The feed to the charge lamp and D+ was open. At key-on the lamp stayed dark and D+ read 0 V. The alternator itself was healthy but never got its excitation current."},
+  belt:{name:"Slipping drive belt",complaints:["Squeal from the engine when the bilge pumps and lights come on; the voltmeter drops.","Black dust around the alternator pulley and the battery runs low."],
+     explain:"The glazed, loose belt limited output to about 30 A. Ripple was normal (the electrical parts were healthy) but output was low, and the belt inspection showed the cause."},
+  poscable:{name:"High resistance in the positive output cable",complaints:["New alternator and new battery, but the battery still never gets fully charged.","Lights dim at idle, and the alternator B+ terminal feels hot."],
+     explain:"Hidden corrosion in the B+ cable added resistance. The alternator made full voltage at its own B+ stud, but the drop from ALT B+ to BAT+ was well over 0.3 V under load."},
+  altgnd:{name:"High resistance in the alternator ground",complaints:["Engine was recently re-mounted on new rubber mounts. Since then the battery doesn't stay charged.","Undercharging, but the shop bench-tested the alternator and it passed."],
+     explain:"The alternator case had a poor ground path. The regulator saw correct voltage at its own case while the battery was undercharged. The drop from BAT− to the alternator case was far over 0.2 V."},
+  batgnd:{name:"High resistance in the battery ground strap",complaints:["Slow cranking, lights flicker, and the battery never quite tops up.","Electronics act strangely and the starter clicks sometimes."],
+     explain:"The battery ground strap was corroded. With current flowing, there was a large drop between the BAT− post and the engine block, which reduced charging voltage at the battery and starved everything grounded to the block."},
+  battery:{name:"Failed battery (shorted cell)",complaints:["Engine is slow to crank, and the alternator gets very hot.","Battery is only two years old but won't hold a charge. Owner already replaced the alternator once."],
+     explain:"The battery had a shorted cell: about 10.5 V resting, and it failed the load test badly. The alternator was healthy but ran at maximum output trying to charge a battery that can't take a charge."},
+  drain:{name:"Parasitic drain",complaints:["Battery is dead if the boat sits for a week, but fine when used daily.","Car won't start after sitting over a long weekend. It runs and charges fine once jumped."],
+     explain:"Something stayed on with the key off, drawing about 1.5 to 2 A. The charging system was fine. The key-off clamp reading on the battery cable was far above the 50 mA limit."}
+};
+const FAULT_KEYS = Object.keys(FAULTS);
+const POINTS = {BATP:"Battery + post",BATN:"Battery − post",ALTB:"Alternator B+ stud",CASE:"Alternator case",BLOCK:"Engine block",EXC:"Alternator D+ terminal"};
+const S = {ign:"off",rpm:"idle",load:"low",mode:"dcv",red:"BATP",black:"BATN",clamp:"alt",next:"red"};
+let C = null; // current case
+let stats = {jobs:0,correct:0,streak:0};
+try{const s=JSON.parse(localStorage.getItem("altTrainerStats")||"null");if(s&&typeof s.jobs==="number")stats=s;}catch(e){}
+function saveStats(){try{localStorage.setItem("altTrainerStats",JSON.stringify(stats));}catch(e){}}
+
+const rnd=(a,b)=>a+Math.random()*(b-a);
+function newCase(){
+  let fault = Math.random()<0.18 ? "ok" : FAULT_KEYS[1+Math.floor(Math.random()*(FAULT_KEYS.length-1))];
+  const p = {
+    OCV:rnd(12.6,12.72), rchg:rnd(0.09,0.12), rdis:rnd(0.007,0.01),
+    Rpos:rnd(0.0015,0.0025), Rag:rnd(0.0008,0.0013), Rbg:rnd(0.0008,0.0013),
+    Vreg:rnd(14.25,14.5), ImaxIdle:rnd(66,74), Imax2k:rnd(106,114),
+    parasitic:rnd(0.015,0.035), loadLowOff:rnd(5,7), loadHighOff:rnd(40,46), loadLow:rnd(13,16), loadHigh:rnd(50,56),
+    ripple:rnd(0.05,0.12)
+  };
+  if(fault==="overcharge") p.Vreg=rnd(15.8,16.3);
+  if(fault==="poscable") p.Rpos=rnd(0.03,0.045);
+  if(fault==="altgnd") p.Rag=rnd(0.03,0.045);
+  if(fault==="batgnd") p.Rbg=rnd(0.03,0.045);
+  if(fault==="battery"){p.OCV=rnd(10.45,10.7);p.rchg=rnd(0.04,0.05);p.rdis=rnd(0.032,0.04);}
+  if(fault==="drain"){p.OCV=rnd(12.15,12.3);p.rchg=rnd(0.06,0.075);p.parasitic=rnd(1.4,2.2);}
+  if(fault==="diode") p.ripple=rnd(1.2,1.7);
+  const f=FAULTS[fault];
+  C = {fault,p,complaint:f.complaints[Math.floor(Math.random()*f.complaints.length)],log:[],tests:0,done:false,
+       vehicle:null};
+  const ct=C.complaint;
+  C.vehicle=/boat|water|bilge|chartplotter|mounts|lights running/i.test(ct)?"Boat":/car|dome|headlight|radio|jumped|starter|crank/i.test(ct)?"Car":(Math.random()<0.5?"Boat":"Car");
+  Object.assign(S,{ign:"off",rpm:"idle",load:"low"});
+  document.getElementById("complaint").innerHTML=`<b>Customer says:</b> ${C.complaint}`;
+  document.getElementById("vehTag").textContent=C.vehicle;
+  document.getElementById("resultBox").innerHTML="";
+  document.getElementById("toolOut").innerHTML="";
+  document.getElementById("diagSel").value="";
+  document.getElementById("submitBtn").disabled=false;
+  renderLog(); syncControls(); update();
+}
+
+function solve(st){
+  const p=C.p,f=C.fault;
+  const running=st.ign==="run", keyOn=st.ign!=="off";
+  const IL = !keyOn ? p.parasitic : running ? (st.load==="high"?p.loadHigh:p.loadLow) : (st.load==="high"?p.loadHighOff:p.loadLowOff);
+  let Imax=0;
+  if(running){
+    Imax = st.rpm==="idle"?p.ImaxIdle:p.Imax2k;
+    if(f==="diode") Imax*=0.6;
+    if(f==="belt") Imax=Math.min(Imax, st.rpm==="idle"?32:27);
+    if(f==="nofield"||f==="exciter") Imax=0;
+  }
+  const Rext=p.Rpos+p.Rag+p.Rbg;
+  let Ia,Ib;
+  if(Imax>0){
+    const num=p.Vreg-p.OCV-IL*(p.Rag+p.Rpos);
+    Ib=num/(p.rchg+Rext); if(Ib<0) Ib=num/(p.rdis+Rext);
+    Ia=IL+Ib;
+    if(Ia>Imax){Ia=Imax;Ib=Imax-IL;}
+    if(Ia<0){Ia=0;Ib=-IL;}
+  } else {Ia=0;Ib=-IL;}
+  const r = Ib>=0?p.rchg:p.rdis;
+  const VP=p.OCV+Ib*r, Vblk=-Ib*p.Rbg, Vcase=Vblk-Ia*p.Rag, VB=VP+Ia*p.Rpos;
+  let EXC, lamp=false;
+  if(!keyOn){EXC=Vcase;}
+  else if(running && Imax>0){EXC=VB-0.04;}
+  else if(f==="exciter"){EXC=Vcase;}
+  else if(f==="nofield"){EXC=VP-0.01;}
+  else {EXC=Vcase+1.35;lamp=true;}
+  const rB = running&&Imax>0 ? p.ripple*(0.6+0.4*Ia/Imax) : 0;
+  return {V:{BATP:VP,BATN:0,ALTB:VB,CASE:Vcase,BLOCK:Vblk,EXC},
+          AC:{BATP:0.45*rB,BATN:0.01*rB,ALTB:rB,CASE:0.02*rB,BLOCK:0.01*rB,EXC:running&&Imax>0?0.9*rB:0},
+          Ia,Ib,IL,Imax,lamp,gauge:VP-Vblk,running,keyOn};
+}
+const jitter=(x,s)=>x+(Math.random()-0.5)*s;
+function reading(st){
+  const m=solve(st);
+  if(st.mode==="dcv"){
+    const v=jitter(m.V[st.red]-m.V[st.black],0.008);
+    return {txt:(Math.abs(v)<0.005?0:v).toFixed(2)+" V DC",desc:`DC V red ${short(st.red)} / black ${short(st.black)}`};
+  }
+  if(st.mode==="acv"){
+    const v=Math.max(0,jitter(Math.abs(m.AC[st.red]-m.AC[st.black]),0.006));
+    return {txt:(v<0.005?0:v).toFixed(2)+" V AC",desc:`AC V red ${short(st.red)} / black ${short(st.black)}`};
+  }
+  let a, where;
+  if(st.clamp==="alt"){a=m.Ia;where="ALT B+ cable";}
+  else if(st.clamp==="bat"){a=m.Ib;where="battery cable";}
+  else {a=m.IL;where="loads feed";}
+  a=jitter(a,Math.abs(a)<1?0.004:0.4);
+  if(Math.abs(a)<0.005) a=0;
+  const mag=Math.abs(a)<10?Math.abs(a).toFixed(2):Math.abs(a).toFixed(1);
+  let txt=(a<0?"−":"")+mag+" A";
+  if(st.clamp==="bat" && a!==0) txt+=`<small>${a>0?"charging":"discharging"}</small>`;
+  return {txt,desc:`Clamp on ${where}`};
+}
+function short(k){return {BATP:"BAT+",BATN:"BAT−",ALTB:"ALT B+",CASE:"ALT case",BLOCK:"Block",EXC:"D+"}[k];}
+function condText(st){
+  if(st.ign==="off") return "Key off";
+  if(st.ign==="on") return `Key on, eng off, ${st.load==="high"?"heavy":"light"} load`;
+  return `Running ${st.rpm==="idle"?"idle":"2000 rpm"}, ${st.load==="high"?"heavy":"light"} load`;
+}
+
+function update(){
+  const m=solve(S);
+  const r=reading(S);
+  document.getElementById("lcd").innerHTML=r.txt;
+  document.getElementById("lampBulb").classList.toggle("on",m.lamp);
+  document.getElementById("gauge").textContent=m.keyOn?jitter(m.gauge,0.06).toFixed(1)+" V":"--.-";
+  let sound="";
+  if(m.running){sound=S.rpm==="idle"?"Engine idling.":"Engine at 2000 rpm.";
+    if(C.fault==="belt"&&S.load==="high") sound+=" A loud squeal from the belt.";}
+  document.getElementById("engineSound").textContent=sound;
+  diagSvg.querySelectorAll(".probe").forEach(g=>{
+    g.classList.toggle("red",S.mode!=="amp"&&g.dataset.probe===S.red);
+    g.classList.toggle("black",S.mode!=="amp"&&g.dataset.probe===S.black);
+  });
+  diagSvg.querySelector(".lampsvg").style.fill=m.lamp?"#ff3b30":"";
+}
+function syncControls(){
+  const setSeg=(id,v)=>document.querySelectorAll(`#${id} button`).forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===v));
+  setSeg("ignSeg",S.ign); setSeg("rpmSeg",S.rpm); setSeg("loadSeg",S.load); setSeg("modeSeg",S.mode);
+  document.querySelectorAll("#rpmSeg button").forEach(b=>b.disabled=S.ign!=="run");
+  document.querySelectorAll("#loadSeg button").forEach(b=>b.disabled=S.ign==="off");
+  document.getElementById("leadRows").hidden=S.mode==="amp";
+  document.getElementById("clampRow").hidden=S.mode!=="amp";
+  document.getElementById("redSel").value=S.red;
+  document.getElementById("blackSel").value=S.black;
+  document.getElementById("clampSel").value=S.clamp;
+}
+function bindSeg(id,key){
+  document.querySelectorAll(`#${id} button`).forEach(b=>b.addEventListener("click",()=>{
+    if(b.disabled) return; S[key]=b.dataset.v; syncControls(); update();
+  }));
+}
+bindSeg("ignSeg","ign"); bindSeg("rpmSeg","rpm"); bindSeg("loadSeg","load"); bindSeg("modeSeg","mode");
+["redSel","blackSel"].forEach(id=>{
+  const sel=document.getElementById(id);
+  Object.entries(POINTS).forEach(([k,v])=>{const o=document.createElement("option");o.value=k;o.textContent=v;sel.appendChild(o);});
+  sel.addEventListener("change",()=>{S[id==="redSel"?"red":"black"]=sel.value;update();});
+});
+document.getElementById("clampSel").addEventListener("change",e=>{S.clamp=e.target.value;update();});
+diagSvg.querySelectorAll(".probe").forEach(g=>g.addEventListener("click",()=>{
+  if(S.mode==="amp"){S.mode="dcv";}
+  S[S.next]=g.dataset.probe; S.next=S.next==="red"?"black":"red";
+  syncControls(); update();
+}));
+
+function renderLog(){
+  const tb=document.getElementById("logBody");
+  if(!C.log.length){tb.innerHTML=`<tr><td colspan="4" class="muted">No readings yet.</td></tr>`;return;}
+  tb.innerHTML=C.log.map((l,i)=>`<tr><td>${i+1}</td><td>${l.cond}</td><td>${l.desc}</td><td><b>${l.txt.replace(/<small>(.*?)<\/small>/," ($1)")}</b></td></tr>`).join("");
+}
+document.getElementById("logBtn").addEventListener("click",()=>{
+  const r=reading(S); C.log.push({cond:condText(S),desc:r.desc,txt:r.txt}); C.tests++;
+  document.getElementById("lcd").innerHTML=r.txt; renderLog();
+});
+document.getElementById("loadTestBtn").addEventListener("click",()=>{
+  const out=document.getElementById("toolOut"), p=C.p;
+  let msg;
+  if(S.ign==="off"){
+    const v=jitter(p.OCV-150*p.rdis-0.15,0.05);
+    const pass=v>=9.6;
+    msg=`<b>Battery load test</b> (150 A for 15 s): battery held <b>${v.toFixed(2)} V</b>. ${pass?"PASS (9.6 V or higher).":"FAIL (below 9.6 V)."}`;
+    C.log.push({cond:"Key off",desc:"Battery load test 150 A",txt:v.toFixed(2)+" V"});
+  } else if(S.ign==="run"){
+    const m=solve(S); const rated=S.rpm==="idle"?70:110;
+    const a=jitter(m.Imax,1.5);
+    msg=`<b>Alternator output test</b> at ${S.rpm==="idle"?"idle":"2000 rpm"}: carbon pile pulled the system to 13.0 V. Clamp read <b>${Math.max(0,a).toFixed(0)} A</b> (expected about ${rated} A at this speed for this unit). ${a>=rated*0.9?"PASS.":"LOW OUTPUT."}`;
+    C.log.push({cond:condText(S),desc:"Output test, clamp ALT B+",txt:Math.max(0,a).toFixed(0)+" A"});
+  } else {
+    msg="Turn the key off for a battery load test, or start the engine for an alternator output test.";
+  }
+  if(S.ign!=="on"){C.tests++;renderLog();}
+  out.innerHTML=`<p>${msg}</p>`;
+});
+const LOOKS={
+  belt:f=>f==="belt"?"Belt sides are glazed and shiny with fine cracks. It deflects about 1 in. at mid-span (spec is about ½ in.). Black dust around the pulley.":"Belt tension feels right (about ½ in. deflection). No glazing, cracks or oil.",
+  battery:f=>f==="overcharge"?"Case is warm, there's a rotten-egg smell, and the electrolyte level is low in every cell.":f==="battery"?"Case looks normal. Date code shows the battery is about 2 years old. Nothing obvious on the outside.":"Case is clean and dry. Terminals are tight. Date code shows about 1 year old.",
+  wiring:f=>"All connections look tight and the cable insulation is intact. No corrosion is visible at the terminals. (Corrosion often hides inside crimps and under insulation, so only a voltage drop test under load proves a connection.)"
+};
+document.querySelectorAll("[data-look]").forEach(b=>b.addEventListener("click",()=>{
+  document.getElementById("toolOut").innerHTML=`<p><b>Inspect ${b.dataset.look}:</b> ${LOOKS[b.dataset.look](C.fault)}</p>`;
+}));
+
+const diagSel=document.getElementById("diagSel");
+diagSel.innerHTML=`<option value="">Choose a diagnosis…</option>`+FAULT_KEYS.map(k=>`<option value="${k}">${FAULTS[k].name}</option>`).join("");
+
+function keyReadings(){
+  const rows=[
+    ["Resting battery voltage",{ign:"off",mode:"dcv",red:"BATP",black:"BATN"}],
+    ["Key-off draw (battery cable)",{ign:"off",mode:"amp",clamp:"bat"}],
+    ["Key on: D+ to block",{ign:"on",load:"low",mode:"dcv",red:"EXC",black:"BLOCK"}],
+    ["2000 rpm light: across battery",{ign:"run",rpm:"2k",load:"low",mode:"dcv",red:"BATP",black:"BATN"}],
+    ["2000 rpm heavy: across battery",{ign:"run",rpm:"2k",load:"high",mode:"dcv",red:"BATP",black:"BATN"}],
+    ["2000 rpm heavy: ALT B+ to BAT+",{ign:"run",rpm:"2k",load:"high",mode:"dcv",red:"ALTB",black:"BATP"}],
+    ["2000 rpm heavy: BAT− to ALT case",{ign:"run",rpm:"2k",load:"high",mode:"dcv",red:"BATN",black:"CASE"}],
+    ["2000 rpm heavy: BAT− to block",{ign:"run",rpm:"2k",load:"high",mode:"dcv",red:"BATN",black:"BLOCK"}],
+    ["2000 rpm heavy: AC ripple B+ to case",{ign:"run",rpm:"2k",load:"high",mode:"acv",red:"ALTB",black:"CASE"}],
+    ["2000 rpm heavy: alternator amps",{ign:"run",rpm:"2k",load:"high",mode:"amp",clamp:"alt"}]
+  ];
+  return rows.map(([n,st])=>{
+    const full=Object.assign({ign:"off",rpm:"idle",load:"low",mode:"dcv",red:"BATP",black:"BATN",clamp:"alt"},st);
+    const r=reading(full); const lamp=solve(full).lamp;
+    return `<tr><td>${n}</td><td><b>${r.txt.replace(/<small>(.*?)<\/small>/," ($1)")}</b>${full.ign==="on"?` · lamp ${lamp?"lit":"dark"}`:""}</td></tr>`;
+  }).join("");
+}
+document.getElementById("submitBtn").addEventListener("click",()=>{
+  const g=diagSel.value; if(!g){diagSel.focus();return;}
+  if(C.done) return;
+  C.done=true; document.getElementById("submitBtn").disabled=true;
+  const right=g===C.fault;
+  stats.jobs++; if(right){stats.correct++;stats.streak++;} else stats.streak=0; saveStats(); renderStats();
+  document.getElementById("resultBox").innerHTML=`<div class="result ${right?"good":"badr"}">
+    <p style="margin-top:0"><b>${right?"Correct!":"Not this time."}</b> The actual condition was <b>${FAULTS[C.fault].name}</b>.${right?"":` You chose: ${FAULTS[g].name}.`}</p>
+    <p>${FAULTS[C.fault].explain}</p>
+    <p class="small muted">You recorded ${C.tests} test${C.tests===1?"":"s"}.</p>
+    <details><summary>Key readings for this job</summary><div class="tablewrap"><table>${keyReadings()}</table></div></details>
+    <div class="row"><button class="btn primary" onclick="newCase()">Next job</button></div></div>`;
+});
+document.getElementById("newBtn").addEventListener("click",newCase);
+function renderStats(){
+  const pct=stats.jobs?Math.round(stats.correct/stats.jobs*100):0;
+  document.getElementById("stats").innerHTML=`<span>Jobs <b>${stats.jobs}</b></span><span>Correct <b>${stats.correct}</b> (${pct}%)</span><span>Streak <b>${stats.streak}</b></span>`;
+}
+renderStats();
+newCase();
+</script>
+</body>
+</html>
