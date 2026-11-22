@@ -5,117 +5,185 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Alternator Trainer</title>
 <meta name="description" content="Learn the parts of a car or boat alternator charging system, take a quiz, and diagnose simulated faults with a multimeter, clamp meter and load tester.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f4f2ee; --panel:#ffffff; --panel2:#ebe8e2; --ink:#1d1f22; --muted:#5d6168; --line:#c9c4bb;
-  --accent:#c2410c; --accent-ink:#ffffff; --pos:#b91c1c; --neg:#1f2937; --ok:#15803d; --bad:#b91c1c; --warn:#a16207;
-  --metal:#d8d4cc; --copper:#b8722c; --field:#6d5bd0; --sel:#f59e0b; --lcd:#c7d3b4; --lcd-ink:#1b2614;
-  --shadow:0 1px 2px rgba(0,0,0,.06),0 4px 14px rgba(0,0,0,.06);
+  --bg:#E3E7DF; --surface:#F5F6F1; --surface2:#EBEEE7; --ink:#16202A; --muted:#515E69; --line:#C3CABF; --line-strong:#8E998D;
+  --pos:#C42B1C; --neg:#16202A; --ok:#1C7A38; --bad:#B3261E; --warn:#946300;
+  --led:#2DBE55; --led-off:#2F3B35; --panel-metal:#1B252E; --switch:#27323C; --switch-on:#35424E; --switch-ink:#A9B4AC; --switch-ink-on:#F2F5EF;
+  --metal:#CDD3C9; --copper:#B26A2A; --field:#6A47B8; --sel:#E0A400; --focus:#E0A400;
+  --lcd:#BAC7A3; --lcd-ink:#17220E; --holster:#C0621B; --body:#262C29;
+  --accent:#16202A; --accent-ink:#F5F6F1;
+  --panel:var(--surface); --panel2:var(--surface2);
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#15171a; --panel:#1e2125; --panel2:#272b30; --ink:#e9e6e1; --muted:#a0a4ab; --line:#3a3f46;
-    --accent:#fb923c; --accent-ink:#1a0d03; --pos:#f87171; --neg:#cbd5e1; --ok:#4ade80; --bad:#f87171; --warn:#facc15;
-    --metal:#3b4048; --copper:#d08a45; --field:#a597ff; --sel:#fbbf24; --lcd:#9fb08a; --lcd-ink:#121a0c;
-    --shadow:0 1px 2px rgba(0,0,0,.4);
+    --bg:#11161B; --surface:#182027; --surface2:#1F2831; --ink:#E2E7DF; --muted:#9AA6AF; --line:#2E3A45; --line-strong:#4D5B67;
+    --pos:#F0675B; --neg:#D5DCE2; --ok:#5BD07D; --bad:#F0675B; --warn:#E5B83A;
+    --led:#3EE06A; --led-off:#26302B; --panel-metal:#070A0D; --switch:#1A232B; --switch-on:#2A3540;
+    --metal:#36414B; --copper:#D08A45; --field:#A58CFF; --sel:#F2C230; --focus:#F2C230;
+    --lcd:#9FB08A; --lcd-ink:#121A0C; --holster:#A9561A; --body:#202523;
+    --accent:#E2E7DF; --accent-ink:#11161B;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#15171a; --panel:#1e2125; --panel2:#272b30; --ink:#e9e6e1; --muted:#a0a4ab; --line:#3a3f46;
-  --accent:#fb923c; --accent-ink:#1a0d03; --pos:#f87171; --neg:#cbd5e1; --ok:#4ade80; --bad:#f87171; --warn:#facc15;
-  --metal:#3b4048; --copper:#d08a45; --field:#a597ff; --sel:#fbbf24; --lcd:#9fb08a; --lcd-ink:#121a0c;
-  --shadow:0 1px 2px rgba(0,0,0,.4);
+  --bg:#11161B; --surface:#182027; --surface2:#1F2831; --ink:#E2E7DF; --muted:#9AA6AF; --line:#2E3A45; --line-strong:#4D5B67;
+  --pos:#F0675B; --neg:#D5DCE2; --ok:#5BD07D; --bad:#F0675B; --warn:#E5B83A;
+  --led:#3EE06A; --led-off:#26302B; --panel-metal:#070A0D; --switch:#1A232B; --switch-on:#2A3540;
+  --metal:#36414B; --copper:#D08A45; --field:#A58CFF; --sel:#F2C230; --focus:#F2C230;
+  --lcd:#9FB08A; --lcd-ink:#121A0C; --holster:#A9561A; --body:#202523;
+  --accent:#E2E7DF; --accent-ink:#11161B;
 }
 *{box-sizing:border-box}
 html,body{margin:0}
-body{background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-header{padding:20px 16px 0;max-width:1180px;margin:0 auto}
-h1{font-size:1.6rem;margin:0 0 4px}
-.sub{color:var(--muted);margin:0 0 14px}
-nav{display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
-nav button{background:none;border:0;border-bottom:3px solid transparent;color:var(--muted);font:inherit;font-weight:600;padding:10px 14px;cursor:pointer}
-nav button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
-main{max-width:1180px;margin:0 auto;padding:16px}
+body{background:var(--bg);color:var(--ink);font-family:"Archivo",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+b,strong{font-weight:650}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+
+/* Header: title and the breaker-panel tab strip */
+header{max-width:1180px;margin:0 auto;padding:36px 16px 0}
+h1{font-stretch:125%;font-weight:800;font-size:clamp(2.1rem,6vw,3.6rem);line-height:.98;letter-spacing:-.015em;margin:0 0 12px}
+.sub{color:var(--muted);margin:0 0 24px;max-width:58ch}
+nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;background:var(--panel-metal);padding:6px;border-radius:10px;max-width:620px}
+nav button{display:flex;align-items:center;gap:10px;min-width:0;background:var(--switch);color:var(--switch-ink);border:0;border-radius:5px;padding:13px 14px;font:inherit;font-stretch:110%;font-weight:650;text-align:left;cursor:pointer;box-shadow:inset 0 -3px 0 rgba(0,0,0,.35);transition:background .15s,color .15s}
+nav button::before{content:"";flex:none;width:10px;height:10px;border-radius:50%;background:var(--led-off);box-shadow:inset 0 1px 2px rgba(0,0,0,.6);transition:background .15s,box-shadow .15s}
+nav button .n{color:inherit;opacity:.6;font-weight:500}
+nav button:hover{color:var(--switch-ink-on)}
+nav button[aria-selected="true"]{background:var(--switch-on);color:var(--switch-ink-on);box-shadow:inset 0 2px 0 rgba(0,0,0,.35)}
+nav button[aria-selected="true"]::before{background:var(--led);box-shadow:0 0 10px 1px color-mix(in srgb,var(--led) 65%,transparent)}
+@media (max-width:480px){
+  nav button{padding:12px 9px;gap:8px;font-stretch:100%;font-size:.95rem}
+  nav button .n{display:none}
+  .seg{display:flex;width:100%}
+  .seg button{flex:1 1 auto}
+}
+
+main{max-width:1180px;margin:0 auto;padding:32px 16px 48px}
 section[hidden]{display:none}
-.grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px;align-items:start}
-@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:var(--shadow)}
-.card h2{margin:0 0 8px;font-size:1.15rem}
-.card h3{margin:14px 0 6px;font-size:1rem}
+h2{font-stretch:112%;font-weight:750;font-size:1.4rem;line-height:1.2;letter-spacing:-.005em;margin:0 0 10px}
+h3{font-stretch:106%;font-weight:700;font-size:1.05rem;margin:22px 0 6px}
+p{max-width:72ch}
 .muted{color:var(--muted)}
-.small{font-size:.88rem}
-button.btn{font:inherit;font-weight:600;border:1px solid var(--line);background:var(--panel2);color:var(--ink);border-radius:8px;padding:8px 12px;cursor:pointer}
-button.btn:hover{border-color:var(--accent)}
-button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
-button.btn:disabled{opacity:.45;cursor:not-allowed}
-.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex-wrap:wrap}
-.seg button{font:inherit;font-size:.9rem;border:0;background:var(--panel2);color:var(--ink);padding:7px 11px;cursor:pointer;border-right:1px solid var(--line)}
-.seg button:last-child{border-right:0}
-.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);font-weight:700}
-.seg button:disabled{opacity:.4;cursor:not-allowed}
-.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:8px 0}
-.row label{font-weight:600;font-size:.9rem;min-width:84px}
-select{font:inherit;font-size:.92rem;padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--ink);max-width:100%}
-.diagram{width:100%;height:auto;display:block;background:var(--panel2);border-radius:10px}
-.diagram text{fill:var(--ink);font-size:13px;font-family:system-ui,sans-serif;pointer-events:none}
+.small{font-size:.9rem}
+
+.grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:28px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr);gap:20px}}
+
+/* Containers: flat by default; surfaces only for physical things */
+.card{min-width:0}
+.card h2{margin:0 0 8px}
+.sec{margin-top:52px;padding-top:22px;border-top:1px solid var(--line-strong)}
+#diag .card.sec{margin-top:26px;padding-top:16px}
+.board{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px}
+.sheet{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:24px}
+@media (max-width:480px){.board{padding:12px}.sheet{padding:18px}}
+
+/* Learn */
+.info{background:var(--surface);border-left:4px solid var(--sel);padding:20px 22px;border-radius:0 8px 8px 0}
+@media (min-width:861px){.info{position:sticky;top:16px}}
+.info h2{color:var(--ink)}
+.info dl{margin:0}
+.info dt{font-stretch:106%;font-weight:700;margin-top:14px;font-size:.95rem}
+.info dd{margin:3px 0 0}
+.diagram{width:100%;height:auto;display:block;background:var(--surface2);border-radius:6px}
+.diagram text{fill:var(--ink);font-size:13px;font-family:"Archivo",system-ui,sans-serif;pointer-events:none}
 .diagram .lbl-s{font-size:11px;fill:var(--muted)}
 .diagram .part{cursor:pointer}
 .diagram .part:hover .hl,.diagram .part.sel .hl{stroke:var(--sel)!important;stroke-width:4}
 .diagram .part:focus{outline:none}
-.diagram .part:focus-visible .hl{stroke:var(--sel)!important;stroke-width:4}
+.diagram .part:focus-visible .hl{stroke:var(--sel)!important;stroke-width:5}
 .diagram .probe{display:none;cursor:pointer}
 .diagram.test .probe{display:inline}
 .diagram.test .part{cursor:default}
 .diagram.test .part:hover .hl{stroke-width:inherit}
 .diagram .probe circle.ring{fill:transparent;stroke:var(--muted);stroke-width:2;stroke-dasharray:3 3}
-.diagram .probe.red circle.ring{stroke:#ef4444;stroke-width:4;stroke-dasharray:none}
+.diagram .probe.red circle.ring{stroke:#E5372A;stroke-width:4;stroke-dasharray:none}
 .diagram .probe.black circle.ring{stroke:var(--neg);stroke-width:4;stroke-dasharray:none}
 .diagram.test .termlbl{display:none}
 .diagram .probe text{font-size:11px;font-weight:700}
-.info h2{color:var(--accent)}
-.info dt{font-weight:700;margin-top:8px}
-.info dd{margin:2px 0 0}
-.partlist{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
-.partlist button{font:inherit;font-size:.82rem;padding:4px 9px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
-.partlist button.sel{border-color:var(--sel);background:var(--sel);color:#1a1200}
-table{border-collapse:collapse;width:100%;font-size:.9rem}
-th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
-th{font-size:.8rem;text-transform:uppercase;letter-spacing:.03em;color:var(--muted)}
-.tablewrap{overflow-x:auto}
-.quiz-q{font-size:1.1rem;font-weight:600;margin:6px 0 12px}
+.partlist{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.partlist button{font:inherit;font-size:.85rem;padding:5px 10px;border-radius:4px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.partlist button:hover{border-color:var(--line-strong)}
+.partlist button.sel{border-color:var(--sel);background:var(--sel);color:#1A1200;font-weight:650}
+.notes{margin:10px 0 0;padding-left:20px;max-width:76ch}
+.notes li{margin:6px 0}
+.notes ul{padding-left:20px;margin:6px 0}
+.notes li::marker{color:var(--muted)}
+
+/* Tables */
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:650;font-size:.85rem;color:var(--muted);border-bottom:2px solid var(--ink);white-space:nowrap}
+.tablewrap{overflow-x:auto;margin-top:14px}
+.basis{display:inline-block;white-space:nowrap;font-size:.8rem;font-weight:650;padding:2px 8px;border-radius:3px}
+.basis.abyc{background:var(--ink);color:var(--surface)}
+.basis.ind{border:1px solid var(--line-strong);color:var(--muted)}
+
+/* Controls */
+button.btn{font:inherit;font-weight:650;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);border-radius:6px;padding:9px 14px;cursor:pointer}
+button.btn:hover{border-color:var(--ink)}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button.primary:hover{background:color-mix(in srgb,var(--accent) 85%,var(--pos))}
+button.btn:disabled{opacity:.45;cursor:not-allowed}
+.seg{display:inline-flex;border:1px solid var(--line-strong);border-radius:6px;overflow:hidden;flex-wrap:wrap;max-width:100%}
+.seg button{font:inherit;font-size:.9rem;border:0;background:var(--surface);color:var(--ink);padding:8px 12px;cursor:pointer;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button:hover{background:var(--surface2)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);font-weight:650}
+.seg button:disabled{opacity:.4;cursor:not-allowed}
+.seg button:focus-visible{outline-offset:-3px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:10px 0}
+.row label{font-weight:650;font-size:.9rem;min-width:96px}
+select{font:inherit;font-size:.92rem;padding:7px 9px;border-radius:6px;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);max-width:100%}
+
+/* Quiz */
+#quiz .sheet{max-width:720px;margin:0 auto}
+.quiz-q{font-stretch:104%;font-size:1.25rem;line-height:1.35;font-weight:650;margin:10px 0 16px}
 .opts{display:grid;gap:8px}
-.opts button{text-align:left;font:inherit;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--ink);cursor:pointer}
-.opts button:hover:not(:disabled){border-color:var(--accent)}
-.opts button.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 18%,var(--panel2))}
-.opts button.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 18%,var(--panel2))}
+.opts button{text-align:left;font:inherit;padding:13px 16px;border-radius:6px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--ink)}
+.opts button.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 16%,var(--surface));font-weight:650}
+.opts button.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 14%,var(--surface))}
 .opts button:disabled{cursor:default}
-.explain{margin-top:12px;padding:10px 12px;border-left:4px solid var(--accent);background:var(--panel2);border-radius:6px}
-.progress{height:6px;background:var(--panel2);border-radius:99px;overflow:hidden;margin:6px 0 10px}
-.progress div{height:100%;background:var(--accent);width:0}
-.meter{background:#2a2d31;border-radius:14px;padding:14px;color:#eee;border:2px solid #111}
-.lcd{background:var(--lcd);color:var(--lcd-ink);font:700 2.2rem/1.1 ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;padding:10px 12px;border-radius:6px;text-align:right;min-height:64px;letter-spacing:.02em}
-.lcd small{font-size:.9rem;display:block;font-weight:600}
-.meter .row label{color:#ddd}
-.meter select{background:#3a3e44;color:#eee;border-color:#555}
-.meter .seg button{background:#3a3e44;color:#eee;border-color:#555}
-.meter .seg{border-color:#555}
-.meter .seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
-.dash{display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding:8px 10px;background:#111;color:#ddd;border-radius:10px;margin-top:10px;font-size:.88rem}
-.bulb{width:22px;height:22px;border-radius:50%;background:#3a1a1a;border:2px solid #555;display:inline-block;vertical-align:middle;margin-right:6px}
-.bulb.on{background:#ff3b30;box-shadow:0 0 12px 3px #ff3b30aa}
-.gauge{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;color:#7dd3fc}
-.complaint{background:var(--panel2);border-radius:8px;padding:10px 12px;margin:6px 0 10px;border-left:4px solid var(--warn)}
-.log td{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.82rem}
-.result{margin-top:12px;padding:12px;border-radius:8px;border:2px solid var(--line)}
-.result.good{border-color:var(--ok)}
-.result.badr{border-color:var(--bad)}
-.stats{display:flex;gap:16px;flex-wrap:wrap;font-size:.9rem;color:var(--muted)}
+.explain{margin-top:16px;padding:12px 16px;border-left:4px solid var(--sel);background:var(--surface2);border-radius:0 6px 6px 0}
+.progress{height:4px;background:var(--line);border-radius:2px;overflow:hidden;margin:10px 0 6px}
+.progress div{height:100%;background:var(--ink);width:0;transition:width .25s}
+
+/* Diagnose: job ticket */
+.ticket{background:var(--surface);border:1px solid var(--line);border-top:0;border-radius:0 0 8px 8px;padding:20px 22px;position:relative;margin-bottom:28px}
+.ticket::before{content:"";position:absolute;left:-1px;right:-1px;top:-8px;height:8px;background:radial-gradient(circle at 6px 8px,transparent 4px,var(--surface) 4.5px) -1px 0/12px 8px repeat-x}
+.complaint{font-size:1.15rem;line-height:1.45;margin:12px 0 14px;padding:2px 0 2px 16px;border-left:3px solid var(--warn);max-width:66ch}
+.tag{display:inline-block;vertical-align:middle;font-size:.78rem;font-weight:650;padding:2px 9px;border-radius:3px;background:var(--ink);color:var(--surface);margin-left:6px;font-stretch:100%}
+.stats{display:flex;gap:18px;flex-wrap:wrap;font-size:.9rem;color:var(--muted)}
 .stats b{color:var(--ink)}
-.notes{margin:8px 0 0;padding-left:18px}
-.notes li{margin:3px 0}
-details summary{cursor:pointer;font-weight:600}
-.tag{display:inline-block;font-size:.75rem;font-weight:700;padding:1px 7px;border-radius:99px;background:var(--panel2);border:1px solid var(--line);color:var(--muted)}
-footer{max-width:1180px;margin:0 auto;padding:10px 16px 30px;color:var(--muted);font-size:.85rem}
+
+/* The multimeter */
+.meter{background:linear-gradient(170deg,#323A36,var(--body) 60%);border:10px solid var(--holster);border-radius:28px;padding:18px 16px 14px;color:#E6EAE3;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+.lcd{background:var(--lcd);color:var(--lcd-ink);font-family:"Archivo",system-ui,sans-serif;font-stretch:62%;font-weight:600;font-size:3rem;line-height:1;padding:12px 14px 10px;border-radius:5px;text-align:right;min-height:84px;letter-spacing:.01em;box-shadow:inset 0 2px 6px rgba(0,0,0,.35);border:3px solid #141815;overflow-wrap:anywhere}
+.lcd small{font-size:.95rem;display:block;font-weight:600;font-stretch:100%;letter-spacing:0;margin-top:4px}
+.meter .row label{color:#C9D0C7}
+.meter select{background:#3A423E;color:#EEF1EC;border-color:#59625D}
+.meter .seg{border-color:#59625D}
+.meter .seg button{background:#3A423E;color:#E6EAE3;border-color:#59625D}
+.meter .seg button:hover{background:#46504B}
+.meter .seg button[aria-pressed="true"]{background:#E6EAE3;color:#16202A}
+.meter button.primary{background:#E6EAE3;color:#16202A;border-color:#E6EAE3}
+.dash{display:flex;gap:16px;align-items:center;flex-wrap:wrap;padding:10px 12px;background:#0E1216;color:#D6DBD3;border-radius:8px;margin-top:12px;font-size:.9rem}
+.dash .muted{color:#97A19A}
+.bulb{width:20px;height:20px;border-radius:50%;background:#3A1A1A;border:2px solid #555;display:inline-block;vertical-align:middle;margin-right:6px}
+.bulb.on{background:#FF3B30;box-shadow:0 0 12px 3px #ff3b30aa}
+.gauge{font-stretch:75%;font-weight:700;font-size:1.05rem;color:#8FD3F5}
+.log td{font-size:.86rem}
+.result{margin-top:14px;padding:14px 16px;border-radius:6px;border:2px solid var(--line)}
+.result.good{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 8%,var(--surface))}
+.result.badr{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 7%,var(--surface))}
+details{margin-top:16px}
+details summary{cursor:pointer;font-weight:650}
+footer{max-width:1180px;margin:0 auto;padding:18px 16px 36px;color:var(--muted);font-size:.85rem;border-top:1px solid var(--line)}
+footer p{margin:0}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
@@ -123,9 +191,9 @@ footer{max-width:1180px;margin:0 auto;padding:10px 16px 30px;color:var(--muted);
   <h1>Alternator Trainer</h1>
   <p class="sub">Car and boat charging systems: learn the parts, take the quiz, then put meters on a simulated engine and find the fault.</p>
   <nav role="tablist">
-    <button role="tab" aria-selected="true" data-tab="learn">1. Learn</button>
-    <button role="tab" aria-selected="false" data-tab="quiz">2. Quiz</button>
-    <button role="tab" aria-selected="false" data-tab="diag">3. Diagnose</button>
+    <button role="tab" aria-selected="true" data-tab="learn"><span class="n">1</span>Learn</button>
+    <button role="tab" aria-selected="false" data-tab="quiz"><span class="n">2</span>Quiz</button>
+    <button role="tab" aria-selected="false" data-tab="diag"><span class="n">3</span>Diagnose</button>
   </nav>
 </header>
 
@@ -133,7 +201,7 @@ footer{max-width:1180px;margin:0 auto;padding:10px 16px 30px;color:var(--muted);
 <!-- ================= LEARN ================= -->
 <section id="learn">
   <div class="grid">
-    <div class="card">
+    <div class="card board">
       <h2>The charging system</h2>
       <p class="muted small">Click any part of the drawing (or a name below) to see what it does, how it fails, and how you test it.</p>
       <div id="learnDiagram"></div>
@@ -142,7 +210,7 @@ footer{max-width:1180px;margin:0 auto;padding:10px 16px 30px;color:var(--muted);
     <div class="card info" id="info" aria-live="polite"></div>
   </div>
 
-  <div class="card" style="margin-top:16px">
+  <div class="card sec">
     <h2>How the system works</h2>
     <ol class="notes">
       <li>The crankshaft turns the alternator pulley through the drive belt, usually 2.5 to 3 times engine speed.</li>
@@ -161,28 +229,28 @@ footer{max-width:1180px;margin:0 auto;padding:10px 16px 30px;color:var(--muted);
     </ul>
   </div>
 
-  <div class="card" style="margin-top:16px">
+  <div class="card sec">
     <h2>Test reference (12 V system)</h2>
     <p class="small muted">Rows marked <b>ABYC E-11</b> use the E-11 voltage drop rule (E-11.15.1.2.6). E-11 sizes conductors for no more than 3% drop on panelboard main feeders, bilge blowers, electronics, navigation lights and other circuits where drop should be kept low, and 10% on general lighting and other non-critical circuits. The conductor length is measured from the positive source connection to the device and back to the negative source connection (E-11.15.1.2.7.3), so positive and negative drops add. E-11's worked example puts 3% at nominal 12 V at 0.36 V. E-11 does not name the alternator output circuit in either category. This trainer holds the charging circuit to the 3% limit as its own choice, measured at full alternator output. Rows marked <b>Industry</b> come from battery and automotive practice (BCI, SAE, manufacturers), not ABYC. ABYC publishes no alternator or charging-system test procedure.</p>
     <div class="tablewrap">
     <table>
       <thead><tr><th>Test</th><th>Conditions</th><th>Meter hookup</th><th>Good result</th><th>Basis</th></tr></thead>
       <tbody>
-        <tr><td>Resting battery voltage</td><td>Key off, engine off, settled</td><td>DC V, red BAT+ / black BAT−</td><td>12.6 V or more is full. 12.2 V is about half. Under 11.8 V is discharged or a shorted cell.</td><td>Industry</td></tr>
-        <tr><td>Charging voltage</td><td>Engine at 2000 rpm</td><td>DC V across battery posts</td><td>13.8 to 14.6 V. Above 15 V means overcharging; under 13.2 V means not charging enough.</td><td>Industry</td></tr>
-        <tr><td>Charging circuit voltage drop, positive side</td><td>Running at 2000 rpm, carbon pile set for full output</td><td>DC V, red ALT B+ / black BAT+</td><td>Add it to the negative-side reading.</td><td>ABYC E-11</td></tr>
-        <tr><td>Charging circuit voltage drop, negative side</td><td>Same conditions</td><td>DC V, red BAT− / black ALT case (negative terminal)</td><td>Positive + negative together must be 0.36 V or less (3%). If you can only test at lower current, scale the reading up to rated output.</td><td>ABYC E-11</td></tr>
-        <tr><td>Battery ground conductor drop</td><td>Full output, or key on with heavy loads</td><td>DC V across BAT− post and engine block</td><td>Part of the negative side above. A large share of the 0.36 V here points at the strap.</td><td>ABYC E-11</td></tr>
-        <tr><td>Diode / ripple test</td><td>Running, heavy load</td><td>AC V, red ALT B+ / black ALT case</td><td>Under 0.5 V AC. A bad diode usually shows over 1 V AC.</td><td>Industry</td></tr>
-        <tr><td>Exciter circuit</td><td>Key on, engine off</td><td>DC V, red D+ / black ground. Watch the charge lamp.</td><td>Lamp lit, D+ about 1 to 2 V. Lamp out with 0 V means an open exciter feed. Lamp out with full battery voltage at D+ means an open field (brushes or regulator).</td><td>Industry</td></tr>
-        <tr><td>Output test</td><td>Running at 2000 rpm, carbon pile load</td><td>Clamp on ALT B+ cable</td><td>At least 90% of the rated output</td><td>Industry</td></tr>
-        <tr><td>Battery load test</td><td>Engine off, load at half CCA for 15 s</td><td>Load tester on the battery posts</td><td>Stays at 9.6 V or higher</td><td>Industry</td></tr>
-        <tr><td>Parasitic draw</td><td>Key off, everything off, modules asleep</td><td>Clamp (or series ammeter) on a battery cable</td><td>Under 0.05 A (50 mA)</td><td>Industry</td></tr>
+        <tr><td>Resting battery voltage</td><td>Key off, engine off, settled</td><td>DC V, red BAT+ / black BAT−</td><td>12.6 V or more is full. 12.2 V is about half. Under 11.8 V is discharged or a shorted cell.</td><td><span class="basis ind">Industry</span></td></tr>
+        <tr><td>Charging voltage</td><td>Engine at 2000 rpm</td><td>DC V across battery posts</td><td>13.8 to 14.6 V. Above 15 V means overcharging; under 13.2 V means not charging enough.</td><td><span class="basis ind">Industry</span></td></tr>
+        <tr><td>Charging circuit voltage drop, positive side</td><td>Running at 2000 rpm, carbon pile set for full output</td><td>DC V, red ALT B+ / black BAT+</td><td>Add it to the negative-side reading.</td><td><span class="basis abyc">ABYC E-11</span></td></tr>
+        <tr><td>Charging circuit voltage drop, negative side</td><td>Same conditions</td><td>DC V, red BAT− / black ALT case (negative terminal)</td><td>Positive + negative together must be 0.36 V or less (3%). If you can only test at lower current, scale the reading up to rated output.</td><td><span class="basis abyc">ABYC E-11</span></td></tr>
+        <tr><td>Battery ground conductor drop</td><td>Full output, or key on with heavy loads</td><td>DC V across BAT− post and engine block</td><td>Part of the negative side above. A large share of the 0.36 V here points at the strap.</td><td><span class="basis abyc">ABYC E-11</span></td></tr>
+        <tr><td>Diode / ripple test</td><td>Running, heavy load</td><td>AC V, red ALT B+ / black ALT case</td><td>Under 0.5 V AC. A bad diode usually shows over 1 V AC.</td><td><span class="basis ind">Industry</span></td></tr>
+        <tr><td>Exciter circuit</td><td>Key on, engine off</td><td>DC V, red D+ / black ground. Watch the charge lamp.</td><td>Lamp lit, D+ about 1 to 2 V. Lamp out with 0 V means an open exciter feed. Lamp out with full battery voltage at D+ means an open field (brushes or regulator).</td><td><span class="basis ind">Industry</span></td></tr>
+        <tr><td>Output test</td><td>Running at 2000 rpm, carbon pile load</td><td>Clamp on ALT B+ cable</td><td>At least 90% of the rated output</td><td><span class="basis ind">Industry</span></td></tr>
+        <tr><td>Battery load test</td><td>Engine off, load at half CCA for 15 s</td><td>Load tester on the battery posts</td><td>Stays at 9.6 V or higher</td><td><span class="basis ind">Industry</span></td></tr>
+        <tr><td>Parasitic draw</td><td>Key off, everything off, modules asleep</td><td>Clamp (or series ammeter) on a battery cable</td><td>Under 0.05 A (50 mA)</td><td><span class="basis ind">Industry</span></td></tr>
       </tbody>
     </table>
     </div>
   </div>
-  <div class="card" style="margin-top:16px">
+  <div class="card sec">
     <h2>ABYC requirements that touch the charging system</h2>
     <ul class="notes">
       <li><b>Voltage drop (E-11.15.1.2.6 and 11.15.1.2.7.3):</b> conductors are sized for no more than 3% drop on panelboard main feeders, bilge blowers, electronics, navigation lights and other circuits where drop should be kept low, and 10% on general lighting and other non-critical circuits. Length is measured out and back, and E-11's example uses nominal system voltage (3% of 12 V is 0.36 V). The current is the circuit's load, or the panelboard's calculated load for main feeders. E-11 does not list the alternator output circuit in either group. A drop test under full current is how you check an installed circuit.</li>
@@ -208,7 +276,7 @@ footer{max-width:1180px;margin:0 auto;padding:10px 16px 30px;color:var(--muted);
 <!-- ABYC -->
 <!-- ================= QUIZ ================= -->
 <section id="quiz" hidden>
-  <div class="card" style="max-width:760px;margin:0 auto">
+  <div class="card sheet">
     <div class="row" style="justify-content:space-between;margin:0">
       <h2 style="margin:0">Quiz</h2>
       <span class="muted small" id="qCount"></span>
@@ -220,7 +288,7 @@ footer{max-width:1180px;margin:0 auto;padding:10px 16px 30px;color:var(--muted);
 
 <!-- ================= DIAGNOSE ================= -->
 <section id="diag" hidden>
-  <div class="card" style="margin-bottom:16px">
+  <div class="card ticket">
     <div class="row" style="justify-content:space-between;margin:0">
       <h2 style="margin:0">Job ticket <span class="tag" id="vehTag"></span></h2>
       <div class="stats" id="stats"></div>
@@ -230,7 +298,7 @@ footer{max-width:1180px;margin:0 auto;padding:10px 16px 30px;color:var(--muted);
   </div>
 
   <div class="grid">
-    <div class="card">
+    <div class="card board">
       <h2>Engine bay</h2>
       <div class="row">
         <label>Key / engine</label>
@@ -289,7 +357,7 @@ footer{max-width:1180px;margin:0 auto;padding:10px 16px 30px;color:var(--muted);
         <div class="row"><button class="btn primary" id="logBtn">Record reading</button></div>
       </div>
 
-      <div class="card" style="margin-top:16px">
+      <div class="card sec">
         <h2>Other tools</h2>
         <div class="row" style="flex-wrap:wrap">
           <button class="btn" id="loadTestBtn">Carbon-pile load tester</button>
@@ -302,7 +370,7 @@ footer{max-width:1180px;margin:0 auto;padding:10px 16px 30px;color:var(--muted);
     </div>
   </div>
 
-  <div class="grid" style="margin-top:16px">
+  <div class="grid sec">
     <div class="card">
       <h2>Test log</h2>
       <div class="tablewrap"><table class="log">
@@ -331,7 +399,7 @@ footer{max-width:1180px;margin:0 auto;padding:10px 16px 30px;color:var(--muted);
   </div>
 </section>
 </main>
-<footer>Simulated readings are simplified for training. Real systems vary by make; always follow the manufacturer's procedure and specifications.</footer>
+<footer><p>Simulated readings are simplified for training. Real systems vary by make; always follow the manufacturer's procedure and specifications.</p></footer>
 
 <template id="sysSvg">
 <svg viewBox="0 0 900 530" class="diagram" role="img" aria-label="Charging system diagram">
