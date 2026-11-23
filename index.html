@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Alternator Trainer</title>
-<meta name="description" content="Learn the parts of a car or boat alternator charging system, take a quiz, and diagnose simulated faults with a multimeter, clamp meter and load tester.">
+<meta name="description" content="Learn the parts of a boat alternator charging system, take a quiz, and diagnose simulated faults with a multimeter, clamp meter and load tester.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
@@ -118,7 +118,7 @@ th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);verti
 th{font-weight:650;font-size:.85rem;color:var(--muted);border-bottom:2px solid var(--ink);white-space:nowrap}
 .tablewrap{overflow-x:auto;margin-top:14px}
 .basis{display:inline-block;white-space:nowrap;font-size:.8rem;font-weight:650;padding:2px 8px;border-radius:3px}
-.basis.abyc{background:var(--ink);color:var(--surface)}
+.basis.tgt{background:var(--ink);color:var(--surface)}
 .basis.ind{border:1px solid var(--line-strong);color:var(--muted)}
 
 /* Controls */
@@ -189,7 +189,7 @@ footer p{margin:0}
 <body>
 <header>
   <h1>Alternator Trainer</h1>
-  <p class="sub">Car and boat charging systems: learn the parts, take the quiz, then put meters on a simulated engine and find the fault.</p>
+  <p class="sub">Marine charging systems: learn the parts, take the quiz, then put meters on a simulated engine and find the fault.</p>
   <nav role="tablist">
     <button role="tab" aria-selected="true" data-tab="learn"><span class="n">1</span>Learn</button>
     <button role="tab" aria-selected="false" data-tab="quiz"><span class="n">2</span>Quiz</button>
@@ -231,16 +231,16 @@ footer p{margin:0}
 
   <div class="card sec">
     <h2>Test reference (12 V system)</h2>
-    <p class="small muted">Rows marked <b>ABYC E-11</b> use the E-11 voltage drop rule (E-11.15.1.2.6). E-11 sizes conductors for no more than 3% drop on panelboard main feeders, bilge blowers, electronics, navigation lights and other circuits where drop should be kept low, and 10% on general lighting and other non-critical circuits. The conductor length is measured from the positive source connection to the device and back to the negative source connection (E-11.15.1.2.7.3), so positive and negative drops add. E-11's worked example puts 3% at nominal 12 V at 0.36 V. E-11 does not name the alternator output circuit in either category. This trainer holds the charging circuit to the 3% limit as its own choice, measured at full alternator output. Rows marked <b>Industry</b> come from battery and automotive practice (BCI, SAE, manufacturers), not ABYC. ABYC publishes no alternator or charging-system test procedure.</p>
+    <p class="small muted">Rows marked <b>3% target</b> apply the E-11 voltage drop rule (E-11.15.1.2.6). E-11 sizes conductors for no more than 3% drop on panelboard main feeders, bilge blowers, electronics, navigation lights and other circuits where drop should be kept low, and 10% on general lighting and other non-critical circuits. The conductor length is measured from the positive source connection to the device and back to the negative source connection (E-11.15.1.2.7.3), so positive and negative drops add. E-11's worked example puts 3% at nominal 12 V at 0.36 V. E-11 does not name the alternator output circuit in either category. This trainer holds the charging circuit to that 3% figure as its own target, measured at full alternator output. Rows marked <b>Industry</b> come from battery and automotive practice (BCI, SAE, manufacturers), not ABYC. ABYC publishes no alternator or charging-system test procedure.</p>
     <div class="tablewrap">
     <table>
       <thead><tr><th>Test</th><th>Conditions</th><th>Meter hookup</th><th>Good result</th><th>Basis</th></tr></thead>
       <tbody>
         <tr><td>Resting battery voltage</td><td>Key off, engine off, settled</td><td>DC V, red BAT+ / black BAT−</td><td>12.6 V or more is full. 12.2 V is about half. Under 11.8 V is discharged or a shorted cell.</td><td><span class="basis ind">Industry</span></td></tr>
         <tr><td>Charging voltage</td><td>Engine at 2000 rpm</td><td>DC V across battery posts</td><td>13.8 to 14.6 V. Above 15 V means overcharging; under 13.2 V means not charging enough.</td><td><span class="basis ind">Industry</span></td></tr>
-        <tr><td>Charging circuit voltage drop, positive side</td><td>Running at 2000 rpm, carbon pile set for full output</td><td>DC V, red ALT B+ / black BAT+</td><td>Add it to the negative-side reading.</td><td><span class="basis abyc">ABYC E-11</span></td></tr>
-        <tr><td>Charging circuit voltage drop, negative side</td><td>Same conditions</td><td>DC V, red BAT− / black ALT case (negative terminal)</td><td>Positive + negative together must be 0.36 V or less (3%). If you can only test at lower current, scale the reading up to rated output.</td><td><span class="basis abyc">ABYC E-11</span></td></tr>
-        <tr><td>Battery ground conductor drop</td><td>Full output, or key on with heavy loads</td><td>DC V across BAT− post and engine block</td><td>Part of the negative side above. A large share of the 0.36 V here points at the strap.</td><td><span class="basis abyc">ABYC E-11</span></td></tr>
+        <tr><td>Charging circuit voltage drop, positive side</td><td>Running at 2000 rpm, carbon pile set for full output</td><td>DC V, red ALT B+ / black BAT+</td><td>Add it to the negative-side reading.</td><td><span class="basis tgt">3% target</span></td></tr>
+        <tr><td>Charging circuit voltage drop, negative side</td><td>Same conditions</td><td>DC V, red BAT− / black ALT case (negative terminal)</td><td>Positive + negative together must be 0.36 V or less (3%). If you can only test at lower current, scale the reading up to rated output.</td><td><span class="basis tgt">3% target</span></td></tr>
+        <tr><td>Battery ground conductor drop</td><td>Full output, or key on with heavy loads</td><td>DC V across BAT− post and engine block</td><td>Part of the negative side above. A large share of the 0.36 V here points at the strap.</td><td><span class="basis tgt">3% target</span></td></tr>
         <tr><td>Diode / ripple test</td><td>Running, heavy load</td><td>AC V, red ALT B+ / black ALT case</td><td>Under 0.5 V AC. A bad diode usually shows over 1 V AC.</td><td><span class="basis ind">Industry</span></td></tr>
         <tr><td>Exciter circuit</td><td>Key on, engine off</td><td>DC V, red D+ / black ground. Watch the charge lamp.</td><td>Lamp lit, D+ about 1 to 2 V. Lamp out with 0 V means an open exciter feed. Lamp out with full battery voltage at D+ means an open field (brushes or regulator).</td><td><span class="basis ind">Industry</span></td></tr>
         <tr><td>Output test</td><td>Running at 2000 rpm, carbon pile load</td><td>Clamp on ALT B+ cable</td><td>At least 90% of the rated output</td><td><span class="basis ind">Industry</span></td></tr>
@@ -299,7 +299,7 @@ footer p{margin:0}
 
   <div class="grid">
     <div class="card board">
-      <h2>Engine bay</h2>
+      <h2>Engine compartment</h2>
       <div class="row">
         <label>Key / engine</label>
         <div class="seg" id="ignSeg">
@@ -327,7 +327,7 @@ footer p{margin:0}
       <p class="small muted" style="margin:6px 0 0">Click a test point to put the selected lead on it. The lead you are placing alternates red, then black.</p>
       <div class="dash">
         <span><span class="bulb" id="lampBulb"></span>Charge lamp</span>
-        <span>Dash voltmeter: <span class="gauge" id="gauge">--.-</span></span>
+        <span>Helm voltmeter: <span class="gauge" id="gauge">--.-</span></span>
         <span id="engineSound" class="muted"></span>
       </div>
     </div>
@@ -390,7 +390,7 @@ footer p{margin:0}
           <li>Key off: battery load test.</li>
           <li>Key on, engine off: does the charge lamp light? Read D+ to ground.</li>
           <li>Start the engine, 2000 rpm, light loads: read voltage across the battery posts.</li>
-          <li>Heavy loads: repeat. Then switch to the carbon pile (full output) and check the drops: ALT B+ to BAT+, plus BAT− to ALT case. The two added together must be 0.36 V or less (ABYC E-11, 3%). Use BAT− to block to see whether the strap is the problem.</li>
+          <li>Heavy loads: repeat. Then switch to the carbon pile (full output) and check the drops: ALT B+ to BAT+, plus BAT− to ALT case. The two added together should be 0.36 V or less (the 3% target). Use BAT− to block to see whether the strap is the problem.</li>
           <li>Switch to AC volts: ripple from ALT B+ to ALT case.</li>
           <li>Output test with the load tester while running. Inspect the belt.</li>
         </ol>
@@ -399,7 +399,7 @@ footer p{margin:0}
   </div>
 </section>
 </main>
-<footer><p>Simulated readings are simplified for training. Real systems vary by make; always follow the manufacturer's procedure and specifications.</p></footer>
+<footer><p>Built by Michael Natkin. Not affiliated with or endorsed by the American Boat &amp; Yacht Council (ABYC); references to ABYC standards are paraphrased for study, and ABYC publishes the official text. Simulated readings are simplified for training. Real systems vary by make; always follow the manufacturer's procedure and specifications.</p></footer>
 
 <template id="sysSvg">
 <svg viewBox="0 0 900 530" class="diagram" role="img" aria-label="Charging system diagram">
@@ -454,21 +454,20 @@ footer p{margin:0}
   </g>
   <!-- B+ cable, fuse, switch -->
   <g class="part" data-part="bplus" tabindex="0">
-    <path d="M470 110 H560 M610 110 H750 V157 M750 193 V390" fill="none" stroke="var(--pos)" stroke-width="5" class="hl"/>
+    <path d="M470 110 H750 V157 M750 193 V328 M750 368 V390" fill="none" stroke="var(--pos)" stroke-width="5" class="hl"/>
     <circle cx="470" cy="110" r="8" fill="var(--pos)"/>
     <text x="680" y="100" text-anchor="middle" class="lbl-s">B+ output cable</text>
     <text x="486" y="100" class="lbl-s termlbl">B+</text>
   </g>
   <g class="part" data-part="fuse" tabindex="0">
-    <rect x="560" y="100" width="50" height="20" rx="4" fill="var(--panel)" stroke="var(--warn)" stroke-width="2" class="hl"/>
-    <line x1="566" y1="110" x2="604" y2="110" stroke="var(--warn)" stroke-width="2"/>
-    <text x="585" y="138" text-anchor="middle" class="lbl-s">Main fuse</text>
+    <rect x="740" y="328" width="20" height="40" rx="4" fill="var(--panel)" stroke="var(--warn)" stroke-width="2" class="hl"/>
+    <line x1="750" y1="334" x2="750" y2="362" stroke="var(--warn)" stroke-width="2"/>
+    <text x="732" y="352" text-anchor="end" class="lbl-s">Main fuse</text>
   </g>
   <g class="part" data-part="batswitch" tabindex="0">
     <circle cx="750" cy="175" r="18" fill="var(--panel)" stroke="var(--neg)" stroke-width="2" class="hl"/>
     <line x1="742" y1="183" x2="758" y2="167" stroke="var(--neg)" stroke-width="3"/>
     <text x="776" y="172" class="lbl-s">Battery switch</text>
-    <text x="776" y="186" class="lbl-s">(boat)</text>
   </g>
   <!-- exciter circuit -->
   <g class="part" data-part="exc" tabindex="0">
@@ -539,14 +538,14 @@ const PARTS = {
   brushes:{name:"Slip rings & brushes",what:"Carbon brushes press on two copper slip rings on the rotor shaft. That's how field current gets into the spinning rotor.",fails:"Brushes wear short and stop making contact. Output becomes intermittent, then stops. Common on older or high-hour units.",test:"Key on, engine off: with an open field, the charge lamp stays dark and the D+ terminal reads full battery voltage, because no current flows through the lamp. Measure brush length on the bench."},
   rectifier:{name:"Rectifier (diode bridge)",what:"Six diodes (two per phase) turn the stator's AC into DC at the B+ terminal. They also stop the battery from discharging back through the stator.",fails:"An open diode cuts output and creates heavy AC ripple, which can upset electronics. A shorted diode drains the battery with the engine off and produces a whine.",test:"AC volts from ALT B+ to the alternator case with the engine running under load. Under 0.5 V AC is normal; over 1 V points to a failed diode or stator phase. Output test will also read low."},
   regulator:{name:"Voltage regulator",what:"Controls field current to hold the system near its setpoint, about 14.2 to 14.6 V. It may be built in or external. Marine multi-stage regulators run bulk, absorption and float stages.",fails:"Shorted: full field all the time. System voltage climbs above 15 V, batteries gas and boil, and bulbs burn out. Open: no field current, no output.",test:"Running at 2000 rpm, read across the battery posts. Steady above about 14.8 V (allowing for temperature compensation) means regulator failure, once you've confirmed the sense circuit is good."},
-  bplus:{name:"B+ output terminal & cable",what:"Carries the alternator's full output, often 60 to 150 A, to the battery and the DC system.",fails:"Corrosion inside the ring terminal or crimp, or a loose nut, adds resistance. The alternator makes the right voltage, but the battery sees less, and the gap grows with current. Corrosion is often hidden under the insulation.",test:"Voltage drop test at full output (carbon pile): red on ALT B+, black on BAT+. Add the negative-side drop; ABYC E-11's 3% limit allows 0.36 V total on 12 V. A clean appearance proves nothing; only a drop test under current shows it."},
-  fuse:{name:"Main fuse (ANL / MRBF)",what:"Protects the output cable from a short circuit. ABYC E-11 requires overcurrent protection within 7 inches of the power source. A sheathed conductor may go up to 72 inches from a battery terminal, or 40 inches from another connection point. No protection is needed at the alternator end when the conductor's ampacity is at least the alternator's rated output.",fails:"A blown fuse disconnects the alternator. A loose or corroded fuse holder causes voltage drop like a bad cable.",test:"Include it in the positive-side voltage drop test, or measure across the fuse alone under load."},
+  bplus:{name:"B+ output terminal & cable",what:"Carries the alternator's full output, often 60 to 150 A, to the battery and the DC system.",fails:"Corrosion inside the ring terminal or crimp, or a loose nut, adds resistance. The alternator makes the right voltage, but the battery sees less, and the gap grows with current. Corrosion is often hidden under the insulation.",test:"Voltage drop test at full output (carbon pile): red on ALT B+, black on BAT+. Add the negative-side drop. This trainer's 3% target (taken from E-11's 3% category) allows 0.36 V total on 12 V. A clean appearance proves nothing; only a drop test under current shows it."},
+  fuse:{name:"Main fuse (ANL / MRBF)",what:"Protects the output cable from a short circuit. ABYC E-11 requires overcurrent protection within 7 inches of the power source. A sheathed conductor may go up to 72 inches from a battery terminal, or 40 inches from another connection point. No protection is needed at the alternator end when the conductor's ampacity is at least the alternator's rated output, so the fuse goes at the battery or bus end, as drawn here.",fails:"A blown fuse disconnects the alternator. A loose or corroded fuse holder causes voltage drop like a bad cable.",test:"Include it in the positive-side voltage drop test, or measure across the fuse alone under load."},
   batswitch:{name:"Battery switch / isolator / ACR",what:"On boats, chooses which bank(s) are connected and lets the alternator charge several banks. A diode isolator or an automatic charging relay keeps banks separate when not charging.",fails:"Worn switch contacts add resistance. Turning the switch to OFF while running causes a load-dump spike that can kill the diodes. A diode isolator drops about 0.7 V, which undercharges unless the regulator senses at the battery.",test:"Voltage drop across the switch at full current. It counts against the circuit's 3% total, so it should be a small fraction of 0.36 V. Read each bank's voltage while charging."},
   exc:{name:"D+ / exciter terminal",what:"The regulator's connection to the charge lamp. At key-on, current through the lamp into D+ energizes the field so the alternator can start charging.",fails:"A broken wire or blown fuse in this circuit means the field never gets that initial current, so the alternator may not charge at all. The lamp stays dark at key-on.",test:"Key on, engine off: D+ to ground. About 1 to 2 V with the lamp lit is normal. 0 V with the lamp dark means an open feed. Full battery voltage with the lamp dark means an open field."},
   lamp:{name:"Charge warning lamp",what:"Connects between the ignition-switched supply and D+. It lights at key-on and goes out once the alternator output matches system voltage.",fails:"A lamp that never lights is a fault in itself: a burned bulb, open wire, or open field. A lamp that stays lit or glows while running means low or no output.",test:"Watch it at key-on and after start-up. Always check that it lights at key-on before blaming the alternator."},
   ign:{name:"Ignition switch",what:"Supplies switched power to the exciter circuit, plus the regulator sense or ignition terminal on many units.",fails:"A failed circuit or fuse leaves the exciter dead. A leaking switch can keep the field energized with the key off and drain the battery.",test:"Voltage at the lamp's supply side with key on should equal battery voltage."},
-  loads:{name:"DC loads",what:"Lights, pumps, electronics, blower, and so on. At idle the alternator may not be able to supply heavy loads, so the battery covers the difference.",fails:"Something left on, or a module that doesn't go to sleep, causes a parasitic drain that flattens the battery while the boat or car sits.",test:"Key off, everything off: clamp or series ammeter on a battery cable. Under 50 mA is typical. Pull fuses one at a time to find the circuit."},
-  altgnd:{name:"Alternator ground path",what:"Output current returns through the alternator case or ground terminal to the block, then to the battery negative. It carries the same current as B+.",fails:"Paint, rust, corrosion, or rubber engine mounts add resistance. The regulator sees full voltage at its own case while the battery is undercharged.",test:"Voltage drop test at full output, between BAT− and the alternator case or negative terminal. Add it to the positive-side drop: 0.36 V total (3%) is the ABYC E-11 limit. ABYC lets engine-mounted equipment return through the block, but a dedicated ground cable to the alternator's negative terminal is good practice on boats."},
+  loads:{name:"DC loads",what:"Lights, pumps, electronics, blower, and so on. At idle the alternator may not be able to supply heavy loads, so the battery covers the difference.",fails:"Something left on, or a module that doesn't go to sleep, causes a parasitic drain that flattens the battery while the boat sits.",test:"Key off, everything off: clamp or series ammeter on a battery cable. Under 50 mA is typical. Pull fuses one at a time to find the circuit."},
+  altgnd:{name:"Alternator ground path",what:"Output current returns through the alternator case or ground terminal to the block, then to the battery negative. It carries the same current as B+.",fails:"Paint, rust, corrosion, or rubber engine mounts add resistance. The regulator sees full voltage at its own case while the battery is undercharged.",test:"Voltage drop test at full output, between BAT− and the alternator case or negative terminal. Add it to the positive-side drop: 0.36 V total (3%) is this trainer's target. ABYC lets engine-mounted equipment return through the block, but a dedicated ground cable to the alternator's negative terminal is good practice on boats."},
   block:{name:"Engine block (ground)",what:"The common return for the alternator, starter, and loads. Everything grounded to it is only as good as its connection to the battery negative.",fails:"Corrosion where the straps bolt on.",test:"Use it as a reference point for voltage drop tests."},
   batgnd:{name:"Battery ground strap",what:"Connects the battery negative to the engine block. All charging current and starting current goes through it.",fails:"Corroded or loose strap: slow cranking, poor charging, flickering lights, and weird electronics faults.",test:"Voltage drop between the BAT− post and the block with current flowing (full output, cranking, or key on with heavy loads). It is part of the charging circuit's negative side, so it counts against the 0.36 V (3%) total."},
   battery:{name:"Battery",what:"Stores energy and stabilizes the system voltage. It supplies starting current and covers loads the alternator can't keep up with.",fails:"Sulfation, a shorted cell (resting voltage drops to about 10.5 V), or old age. A bad battery makes a good alternator look weak because it pulls maximum current all the time.",test:"Resting voltage, a load test (half CCA for 15 s, stays at 9.6 V or higher), or a conductance tester. Always test the battery before condemning the alternator."}
@@ -597,17 +596,17 @@ const QUIZ = [
  {q:"A fully charged 12 V lead-acid battery at rest reads about:",a:"12.6 to 12.7 V",w:["14.4 V","12.0 V","11.5 V"],e:"About 12.6 V is 100%, about 12.2 V is roughly 50%, and 12.0 V or less is deeply discharged. A reading near 10.5 V suggests a shorted cell."},
  {q:"You measure 1.6 V AC from ALT B+ to the alternator case with the engine running under load. The most likely cause is:",a:"A failed diode or open stator phase",w:["A loose ground strap","A worn belt","A parasitic drain"],e:"Normal ripple is under 0.5 V AC. A missing diode leaves a gap in the rectified waveform, which shows up as heavy AC ripple."},
  {q:"Why must a voltage drop test be done with current flowing?",a:"Resistance only produces a voltage drop when current flows through it",w:["The meter needs the alternator to power it","It isn't necessary; key off works too","To warm up the battery"],e:"V = I × R. A corroded cable with no current through it shows 0 V drop and looks perfect."},
- {q:"Using ABYC E-11's 3% limit, the maximum total voltage drop for a 12 V charging circuit at full output is about:",a:"0.36 V, positive and negative sides added together",w:["0.36 V on each side","1.2 V total","0.7 V, the drop of one diode"],e:"3% of 12 V is 0.36 V. ABYC figures the drop over the whole circuit, out and back, so add the ALT B+ to BAT+ and BAT− to alternator negative readings."},
+ {q:"Using a 3% target (E-11's stricter voltage drop category), the maximum total voltage drop for a 12 V charging circuit at full output is about:",a:"0.36 V, positive and negative sides added together",w:["0.36 V on each side","1.2 V total","0.7 V, the drop of one diode"],e:"3% of 12 V is 0.36 V. E-11 doesn't name the alternator circuit, so 3% is a design target here. E-11 figures drop over the whole circuit, out and back, so add the ALT B+ to BAT+ and BAT− to alternator negative readings."},
  {q:"ABYC E-11 allows up to 10% voltage drop for which kind of circuit?",a:"Non-critical circuits such as general cabin lighting",w:["Navigation lights","Bilge blowers","Electronics"],e:"Navigation lights, bilge blowers, electronics and panel main feeders are 3% circuits. General lighting and other non-critical loads may drop up to 10%."},
  {q:"Under ABYC E-11, overcurrent protection for an ungrounded conductor generally must be within how far of the power source?",a:"7 inches, measured along the conductor",w:["7 feet","At the load end","Anywhere on the circuit"],e:"The 7-inch rule (E-11.10.1.1.1.1) keeps the unprotected length short. Exceptions allow up to 72 inches for a sheathed conductor at a battery terminal, 40 inches for a sheathed conductor elsewhere, and none at the alternator end when the conductor's ampacity is at least the alternator's rated output."},
  {q:"Under ABYC E-11, a conductor connected directly to a battery terminal and run in a sheath or enclosure for its whole length may have its fuse up to how far from the battery?",a:"72 inches, as close as practicable",w:["7 inches","40 inches","No limit"],e:"E-11.10.1.1.1.1 Exception 2 allows up to 72 inches when the conductor is sheathed for its full length. A sheathed conductor connected somewhere other than a battery terminal gets 40 inches."},
- {q:"Why does ABYC-style voltage drop testing use full alternator output rather than a light load?",a:"Drop is proportional to current, and the limit applies at the circuit's full load",w:["The meter is more accurate at high current","Light loads damage the regulator","ABYC requires the engine at idle"],e:"V = I × R. A connection that drops 0.1 V at 30 A will drop about 0.37 V at 110 A and fail the 3% limit."},
+ {q:"Why should a charging-circuit voltage drop test use full alternator output rather than a light load?",a:"Drop is proportional to current, and the 3% target applies at the circuit's full load",w:["The meter is more accurate at high current","Light loads damage the regulator","The regulator only works at idle"],e:"V = I × R. A connection that drops 0.1 V at 30 A will drop about 0.37 V at 110 A and miss the 3% target."},
  {q:"On a D+ excited alternator, the charge lamp at key-on with the engine stopped should:",a:"Light up",w:["Stay off","Flash rapidly","Glow only at high rpm"],e:"Lamp current into D+ is what excites the field. A lamp that stays dark at key-on is itself a fault clue: an open feed, bad bulb or open field."},
  {q:"Battery voltage is 15.9 V with the engine running at 2000 rpm and light loads. The most likely fault is:",a:"Regulator failed, overcharging",w:["Bad battery ground","Slipping belt","Failed diode"],e:"Above about 15 V the regulator is not controlling field current. Expect boiling batteries and burned-out bulbs."},
  {q:"Key off with everything off, the clamp meter on the battery cable reads 1.9 A. This indicates:",a:"A parasitic drain",w:["Normal standby current","A good charging rate","A failed regulator overcharging"],e:"Normal standby draw is usually under 50 mA. 1.9 A will flatten a battery in a few days."},
  {q:"What does a diode isolator or automatic charging relay (ACR) do on a boat?",a:"Lets the alternator charge several battery banks while keeping them separate when not charging",w:["Converts AC shore power to DC","Prevents the engine from starting in gear","Raises the alternator's rpm"],e:"It stops the house loads from draining the start battery. A diode isolator drops about 0.7 V, so the regulator must sense at the battery to compensate."},
  {q:"Where does the alternator's output current return to complete the circuit?",a:"Through the alternator case or ground terminal, the engine block, and the battery negative",w:["Back through the B+ cable","Through the belt","Through the charge lamp"],e:"The ground side carries the full output current, so a bad ground undercharges as much as a bad positive cable."},
- {q:"How many phases does a typical automotive or marine alternator's stator produce?",a:"Three",w:["One","Two","Six"],e:"Three windings spaced 120° apart give smoother output. Six diodes rectify all three phases."},
+ {q:"How many phases does a typical marine alternator's stator produce?",a:"Three",w:["One","Two","Six"],e:"Three windings spaced 120° apart give smoother output. Six diodes rectify all three phases."},
  {q:"A slipping drive belt typically causes:",a:"Low output under heavy load or high rpm, often with a squeal",w:["Very high system voltage","Heavy AC ripple at all times","A drain with the key off"],e:"Belt slip limits how much torque reaches the alternator, so output falls when demand is high. Ripple stays normal because the rectifier is fine."},
  {q:"In a battery load test (half CCA for 15 seconds), a healthy 12 V battery should stay at or above:",a:"9.6 V",w:["12.6 V","6.0 V","14.4 V"],e:"9.6 V at about 21 °C (70 °F) is the classic pass line. A battery with a shorted cell collapses well below it."},
  {q:"Why should you never switch the battery switch to OFF while the engine is running?",a:"The load dump voltage spike can destroy the rectifier diodes and regulator",w:["It stalls the engine instantly","It reverses the battery polarity","It will blow the main fuse every time"],e:"With the battery suddenly disconnected, nothing absorbs the output. The voltage spikes, sometimes past 40 V. Field-disconnect switches or protection devices prevent it."},
@@ -650,27 +649,27 @@ startQuiz();
 
 /* ---------------- Diagnosis simulator ---------------- */
 const FAULTS = {
-  ok:{name:"System OK: no fault found",complaints:["Pre-purchase survey: check the charging system and report.","Battery went flat after the dome lights were left on all weekend. Owner wants to know if the alternator is OK.","Dash voltmeter dips toward 13 V at idle with everything switched on. Owner asks if that's a problem.","Routine annual service. Please check the charging system."],
-     explain:"Everything was in spec. Resting voltage was normal, charging was 13.8 to 14.6 V at 2000 rpm, total voltage drop at full output was within the ABYC E-11 3% limit (0.36 V), ripple was low and output met rating. A dip at idle with heavy loads is normal, because idle output is limited."},
-  diode:{name:"Failed rectifier diode",complaints:["Battery slowly goes flat on long nights running the lights. The radio has a whine that rises with rpm.","Charging seems weak, and the chartplotter flickers with engine speed."],
+  ok:{name:"System OK: no fault found",complaints:["Pre-purchase survey: check the charging system and report.","Battery went flat after the cabin lights were left on all weekend. Owner wants to know if the alternator is OK.","Helm voltmeter dips toward 13 V at idle with everything switched on. Owner asks if that's a problem.","Routine annual service. Please check the charging system."],
+     explain:"Everything was in spec. Resting voltage was normal, charging was 13.8 to 14.6 V at 2000 rpm, total voltage drop at full output was within the 3% target (0.36 V), ripple was low and output met rating. A dip at idle with heavy loads is normal, because idle output is limited."},
+  diode:{name:"Failed rectifier diode",complaints:["Battery slowly goes flat on long nights running the lights. The VHF has a whine that rises with rpm.","Charging seems weak, and the chartplotter flickers with engine speed."],
      explain:"One open diode cut output to about 60% of rating and produced heavy AC ripple (over 1 V AC at B+). Charging looked fine with light loads but could not keep up under heavy load."},
-  overcharge:{name:"Regulator failed: overcharging",complaints:["Headlight bulbs keep burning out and the battery smells like rotten eggs.","Battery is hot to the touch after a run and is losing water fast."],
+  overcharge:{name:"Regulator failed: overcharging",complaints:["Navigation light bulbs keep burning out and the battery compartment smells like rotten eggs.","Battery is hot to the touch after a run and is losing water fast."],
      explain:"The regulator was stuck at full field. Voltage across the battery climbed near 16 V even at light load. Wiring and battery were fine."},
   nofield:{name:"No field current (worn brushes / open regulator)",complaints:["Charge lamp doesn't come on anymore, and the battery dies after a few days of use.","Engine runs fine, but the battery is flat every morning after a day on the water."],
      explain:"The field circuit inside the alternator was open. At key-on the lamp stayed dark while D+ read full battery voltage (the feed is good but no current flows). There was no output with the engine running."},
-  exciter:{name:"Open excitation circuit (blown fuse / broken wire)",complaints:["Charge lamp never lights at all, even at key-on. The battery is going flat.","After some wiring work behind the dash, the alternator stopped charging."],
+  exciter:{name:"Open excitation circuit (blown fuse / broken wire)",complaints:["Charge lamp never lights at all, even at key-on. The battery is going flat.","After some wiring work behind the helm panel, the alternator stopped charging."],
      explain:"The feed to the charge lamp and D+ was open. At key-on the lamp stayed dark and D+ read 0 V. The alternator itself was healthy but never got its excitation current."},
   belt:{name:"Slipping drive belt",complaints:["Squeal from the engine when the bilge pumps and lights come on; the voltmeter drops.","Black dust around the alternator pulley and the battery runs low."],
      explain:"The glazed, loose belt limited output to about 30 A. Ripple was normal (the electrical parts were healthy) but output was low, and the belt inspection showed the cause."},
   poscable:{name:"High resistance in the positive output cable",complaints:["New alternator and new battery, but the battery still never gets fully charged.","Lights dim at idle, and the alternator B+ terminal feels hot."],
-     explain:"Hidden corrosion in the B+ cable added resistance. The alternator made full voltage at its own B+ stud, but the drop from ALT B+ to BAT+ at full output was over 1 V by itself, far beyond the ABYC E-11 3% limit (0.36 V total for both sides)."},
+     explain:"Hidden corrosion in the B+ cable added resistance. The alternator made full voltage at its own B+ stud, but the drop from ALT B+ to BAT+ at full output was over 1 V by itself, far beyond the 3% target (0.36 V total for both sides)."},
   altgnd:{name:"High resistance in the alternator ground",complaints:["Engine was recently re-mounted on new rubber mounts. Since then the battery doesn't stay charged.","Undercharging, but the shop bench-tested the alternator and it passed."],
-     explain:"The alternator case had a poor ground path. The regulator saw correct voltage at its own case while the battery was undercharged. The drop from BAT− to the alternator case at full output was well over 1 V, so the circuit failed the ABYC E-11 3% limit (0.36 V total)."},
+     explain:"The alternator case had a poor ground path. The regulator saw correct voltage at its own case while the battery was undercharged. The drop from BAT− to the alternator case at full output was well over 1 V, so the circuit missed the 3% target (0.36 V total)."},
   batgnd:{name:"High resistance in the battery ground strap",complaints:["Slow cranking, lights flicker, and the battery never quite tops up.","Electronics act strangely and the starter clicks sometimes."],
      explain:"The battery ground strap was corroded. With current flowing, there was a large drop between the BAT− post and the engine block, which reduced charging voltage at the battery and starved everything grounded to the block."},
   battery:{name:"Failed battery (shorted cell)",complaints:["Engine is slow to crank, and the alternator gets very hot.","Battery is only two years old but won't hold a charge. Owner already replaced the alternator once."],
      explain:"The battery had a shorted cell: about 10.5 V resting, and it failed the load test badly. The alternator was healthy but ran at maximum output trying to charge a battery that can't take a charge."},
-  drain:{name:"Parasitic drain",complaints:["Battery is dead if the boat sits for a week, but fine when used daily.","Car won't start after sitting over a long weekend. It runs and charges fine once jumped."],
+  drain:{name:"Parasitic drain",complaints:["Battery is dead if the boat sits for a week, but fine when used daily.","Engine won't crank after the boat sat at the dock over a long weekend. It runs and charges fine once jumped."],
      explain:"Something stayed on with the key off, drawing about 1.5 to 2 A. The charging system was fine. The key-off clamp reading on the battery cable was far above the 50 mA limit."}
 };
 const FAULT_KEYS = Object.keys(FAULTS);
@@ -702,7 +701,7 @@ function newCase(){
   C = {fault,p,complaint:f.complaints[Math.floor(Math.random()*f.complaints.length)],log:[],tests:0,done:false,
        vehicle:null};
   const ct=C.complaint;
-  C.vehicle=/boat|water|bilge|chartplotter|mounts|lights running/i.test(ct)?"Boat":/car|dome|headlight|radio|jumped|starter|crank/i.test(ct)?"Car":(Math.random()<0.5?"Boat":"Car");
+  C.vehicle="Inboard engine";
   Object.assign(S,{ign:"off",rpm:"idle",load:"low"});
   document.getElementById("complaint").innerHTML=`<b>Customer says:</b> ${C.complaint}`;
   document.getElementById("vehTag").textContent=C.vehicle;
@@ -890,7 +889,7 @@ function keyReadings(){
   ];
   const fo={ign:"run",rpm:"2k",load:"pile"}; const mm=solve(fo);
   const tot=(mm.V.ALTB-mm.V.BATP)+(0-mm.V.CASE);
-  const totRow=`<tr><td>ABYC 3% check: total drop at full output</td><td>${mm.Ia<1?"Not testable (no alternator output)":`<b>${tot.toFixed(2)} V</b> at ${mm.Ia.toFixed(0)} A · ${tot<=0.36?"within":"exceeds"} 0.36 V`}</td></tr>`;
+  const totRow=`<tr><td>3% target check: total drop at full output</td><td>${mm.Ia<1?"Not testable (no alternator output)":`<b>${tot.toFixed(2)} V</b> at ${mm.Ia.toFixed(0)} A · ${tot<=0.36?"within":"exceeds"} 0.36 V`}</td></tr>`;
   return totRow+rows.map(([n,st])=>{
     const full=Object.assign({ign:"off",rpm:"idle",load:"low",mode:"dcv",red:"BATP",black:"BATN",clamp:"alt"},st);
     const r=reading(full); const lamp=solve(full).lamp;
